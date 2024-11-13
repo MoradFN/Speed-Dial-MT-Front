@@ -1,0 +1,3 @@
+ta bort: 
+"server": "json-server --watch src/jobs.json --port 5000"
+i package .json efter test
