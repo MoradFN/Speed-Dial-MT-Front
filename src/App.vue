@@ -6,6 +6,6 @@ import { RouterView } from "vue-router";
 <!-- working -->
 <template>
   <Navbar />
-  <logContact />
+  <!-- <logContact /> -->
   <RouterView />
 </template>

@@ -32,7 +32,7 @@ onMounted(async () => {
   <section class="bg-blue-50 px-4 py-10">
     <div class="container-xl lg:container m-auto">
       <h2 class="text-3xl font-bold text-green-500 mb-6 text-center">
-        Browse Jobs
+        Browse Target Lists
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <JobListing
@@ -49,7 +49,7 @@ onMounted(async () => {
     <RouterLink
       to="/jobs"
       class="block bg-black text-white text-center py-4 px-6 rounded-xl hover:bg-gray-700"
-      >View All Jobs</RouterLink
+      >Visa fler</RouterLink
     >
   </section>
 </template>
