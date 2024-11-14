@@ -2,6 +2,8 @@
 import { RouterLink } from "vue-router";
 import { defineProps, ref, computed } from "vue";
 
+// MTTODO BYT TILL ATT VISA SPECIFIC TARGET LIST MED INNEHÅLLET AV ACCOUNTS OCH KONTAKTER använd JObListings(plural) COMPONENT SOM MALL?.
+//SPEED DIALER START BUTTUN HÄR?
 const props = defineProps({
   job: {
     type: Object,

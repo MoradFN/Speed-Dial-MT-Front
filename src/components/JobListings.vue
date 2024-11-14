@@ -11,7 +11,7 @@ defineProps({
     default: false,
   },
 });
-
+//MTTODO: BYT TILL ATT HÄMTA ALLA TARGETLISTS.
 const state = reactive({
   jobs: [],
   isLoading: true,
