@@ -10,10 +10,22 @@ export default defineConfig({
 
   server: {
     port: 3000,
-    //MTTODO -CHECK
+    //MTTODO -KOmmentera ut proxy för egen server
+    // proxy: {
+    //   "/api": {
+    //     target: "http://localhost:8080",
+    //     changeOrigin: true,
+    //     rewrite: (path) => path.replace(/^\/api/, ""),
+    //   },
+    // },
+
+    //MTTODO
+    //Testa ersätta ''http://localhost:8080/index.php?route='' med /api
+    // http://localhost:8080/index.php?route=log-contact-interaction
+
     proxy: {
       "/api": {
-        target: "http://localhost:8080",
+        target: "http://localhost:5000",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
