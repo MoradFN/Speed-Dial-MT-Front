@@ -16,6 +16,7 @@ const targetListId = route.params.id; // om jag ska använda id = params.id, om 
 const state = reactive({
   targetList: {},
   isLoading: true,
+  openContacts: {}, // Track open/close state for each account’s contacts
 });
 
 const deleteTargetList = async () => {
@@ -34,6 +35,11 @@ const deleteTargetList = async () => {
     console.error("Error deleting target list", error);
     toast.error("Target List Was Not Deleted");
   }
+};
+
+// Toggle contacts visibility for a specific account
+const toggleContacts = (accountId) => {
+  state.openContacts[accountId] = !state.openContacts[accountId];
 };
 
 // Fetch specific target list details on mount
@@ -114,11 +120,28 @@ onMounted(async () => {
               </p>
             </div>
             <hr class="my-2" />
+
             <div class="flex items-center justify-center md:justify-start">
               <i class="pi pi-users text-xl text-blue-700 mr-2"></i>
-              <h5 class="text-lg font-bold mt-4">Contacts</h5>
+              <h5
+                class="text-lg font-bold mt-4 cursor-pointer flex items-center"
+                @click="toggleContacts(account.account_id)"
+              >
+                Contacts
+                <i
+                  :class="{
+                    'pi-angle-double-down':
+                      state.openContacts[account.account_id],
+                    'pi-angle-double-up':
+                      !state.openContacts[account.account_id],
+                  }"
+                  class="pi text-xl ml-2"
+                ></i>
+              </h5>
             </div>
-            <ul>
+
+            <!-- Contacts List (conditionally rendered) -->
+            <ul v-if="state.openContacts[account.account_id]">
               <li
                 v-for="contact in account.contacts"
                 :key="contact.contact_id"
