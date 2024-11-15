@@ -140,8 +140,9 @@ onMounted(async () => {
         <!-- Sidebar -->
         <aside>
           <!-- Manage Target List -->
+          <!-- OBS ÄNDRAD TEXT, EDIT SKA ÄNDRAS TILL STARTA SPEED DIALER OCH CHECK RECENT LOGS! -->
           <div class="bg-white p-6 rounded-lg shadow-md mt-6">
-            <h3 class="text-xl font-bold mb-6">Speed Diealer</h3>
+            <h3 class="text-xl font-bold mb-6">Speed Dialer</h3>
             <RouterLink
               :to="`/target-lists/edit/${state.targetList.id}`"
               class="bg-green-500 hover:bg-green-600 text-white text-center font-bold py-2 px-4 rounded-full w-full focus:outline-none focus:shadow-outline mt-4 block"
