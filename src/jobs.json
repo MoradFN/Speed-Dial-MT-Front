@@ -1,18 +1,18 @@
 {
   "jobs": [
     {
-      "id": "1",
-      "title": "Senior Vue Developer",
       "type": "Full-Time",
+      "title": "Senior Vue Dev",
       "description": "We are seeking a talented Front-End Developer to join our team in Boston, MA. The ideal candidate will have strong skills in HTML, CSS, and JavaScript, with experience working with modern JavaScript frameworks such as Vue or Angular.",
+      "salary": "$90K - $100K",
       "location": "Boston, MA",
-      "salary": "$70K - $80K",
       "company": {
         "name": "NewTek Solutions",
         "description": "NewTek Solutions is a leading technology company specializing in web development and digital solutions. We pride ourselves on delivering high-quality products and services to our clients while fostering a collaborative and innovative work environment.",
         "contactEmail": "contact@teksolutions.com",
         "contactPhone": "555-555-5555"
-      }
+      },
+      "id": "1"
     },
     {
       "id": "2",
@@ -82,104 +82,6 @@
         "description": "Port Solutions is a leading technology company specializing in software development and digital marketing. We are committed to providing our clients with cutting-edge solutions and our employees with a supportive and rewarding work environment.",
         "contactEmail": "contact@ipsumlorem.com",
         "contactPhone": "555-555-5555"
-      }
-    },
-    {
-      "id": "cd5e",
-      "type": "Full-Time",
-      "title": "sdfsdfds",
-      "description": "sdfsdf",
-      "salary": "Over $200K",
-      "location": "sdfsdf",
-      "company": {
-        "name": "asdsadasd",
-        "description": "sdfsdfsdf",
-        "contactEmail": "asdasd@sada.asd",
-        "contactPhone": "asdasd"
-      }
-    },
-    {
-      "id": "5ea3",
-      "type": "Full-Time",
-      "title": "sdfsdfds",
-      "description": "sdfsdf",
-      "salary": "Over $200K",
-      "location": "sdfsdf",
-      "company": {
-        "name": "asdsadasd",
-        "description": "sdfsdfsdf",
-        "contactEmail": "asdasd@sada.asd",
-        "contactPhone": "asdasd"
-      }
-    },
-    {
-      "id": "0cae",
-      "type": "Full-Time",
-      "title": "Morad Tumah",
-      "description": "asdsad",
-      "salary": "Over $200K",
-      "location": "Oskarshamn",
-      "company": {
-        "name": "FlexNet",
-        "description": "asdsadasdasd",
-        "contactEmail": "tumahmorad@gmail.com",
-        "contactPhone": "0734175119"
-      }
-    },
-    {
-      "id": "8b81",
-      "type": "Full-Time",
-      "title": "Morad Tumah",
-      "description": "",
-      "salary": "Over $200K",
-      "location": "asdasd",
-      "company": {
-        "name": "FlexNet",
-        "description": "sadasd",
-        "contactEmail": "tumahmorad@gmail.com",
-        "contactPhone": "0734175119"
-      }
-    },
-    {
-      "id": "4f20",
-      "type": "Full-Time",
-      "title": "Morad Tumah",
-      "description": "",
-      "salary": "Over $200K",
-      "location": "asdasd",
-      "company": {
-        "name": "FlexNet",
-        "description": "sadasd",
-        "contactEmail": "tumahmorad@gmail.com",
-        "contactPhone": "0734175119"
-      }
-    },
-    {
-      "id": "7148",
-      "type": "Full-Time",
-      "title": "Test 1",
-      "description": "Test Description 1",
-      "salary": "Under $50K",
-      "location": "Test Location 1",
-      "company": {
-        "name": "Test COmpany name 1",
-        "description": "Test COmpany Description 1",
-        "contactEmail": "Test1@test1.com",
-        "contactPhone": "555-55555"
-      }
-    },
-    {
-      "id": "407c",
-      "type": "Full-Time",
-      "title": "Test 2",
-      "description": "Test des2",
-      "salary": "$50K - $60K",
-      "location": "Test Location 2",
-      "company": {
-        "name": "Test COmpany name 2",
-        "description": "test Company Description2",
-        "contactEmail": "ContactEmail2@test.se",
-        "contactPhone": "777777777"
       }
     }
   ]
