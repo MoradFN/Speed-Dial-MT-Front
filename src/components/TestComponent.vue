@@ -10,9 +10,8 @@ const errorMessage = ref("");
 // Fetch target lists on component mount
 onMounted(async () => {
   try {
-    const response = await axios.get(
-      "http://localhost:8080/index.php?route=target-lists"
-    );
+    const response = await axios.get("/api/index.php?route=target-lists");
+    console.log(response.data);
     targetLists.value = response.data.targetLists || [];
   } catch (error) {
     errorMessage.value = "Failed to load target lists. Please try again.";
