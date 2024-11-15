@@ -65,8 +65,13 @@ onMounted(async () => {
             <div class="text-gray-500 mb-4">
               {{ state.targetList.campaign_name }}
             </div>
-            <!-- ovan, type funkar ej. -->
-            <h1 class="text-3xl font-bold mb-4">{{ state.targetList.name }}</h1>
+            <div class="flex align-middle justify-center md:justify-start">
+              <!-- ovan, type funkar ej. -->
+              <i class="pi pi-bolt text-xl text-orange-700 mr-2"></i>
+              <h1 class="text-3xl font-bold mb-4">
+                {{ state.targetList.name }}
+              </h1>
+            </div>
 
             <p class="mb-4">
               {{ state.targetList.description }}
@@ -82,7 +87,7 @@ onMounted(async () => {
             <div
               class="text-gray-500 mb-4 flex align-middle justify-center md:justify-start"
             >
-              <i class="pi pi-map-marker text-xl text-orange-700 mr-2"></i>
+              <i class="pi pi-bolt text-xl text-orange-700 mr-2"></i>
               <p class="text-orange-700">{{ state.targetList.status }}</p>
             </div>
           </div>
