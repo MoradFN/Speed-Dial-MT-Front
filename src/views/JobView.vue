@@ -11,39 +11,47 @@ const route = useRoute();
 const router = useRouter();
 const toast = useToast();
 
-const jobId = route.params.id; // om jag ska använda id = params.id, om jag använder slug = params.slug.
+const targetListId = route.params.id; // om jag ska använda id = params.id, om jag använder slug = params.slug.
 
 const state = reactive({
-  job: {},
+  targetList: {},
   isLoading: true,
 });
 
-const deleteJob = async () => {
+const deleteTargetList = async () => {
   try {
-    const confirm = window.confirm("Are you sure you want to delete this job?");
+    const confirm = window.confirm(
+      "Are you sure you want to delete this target list?"
+    );
     if (confirm) {
-      await axios.delete(`/api/jobs/${jobId}`);
-      toast.success("Job Deleted Successfully");
-      router.push("/jobs");
+      await axios.delete(
+        `/api/index.php?route=delete-target-list&id=${targetListId}`
+      );
+      toast.success("Target List Deleted Successfully");
+      router.push("/target-lists");
     }
   } catch (error) {
-    console.error("Error deleting job", error);
-    toast.error("Job Was Not Deleted");
+    console.error("Error deleting target list", error);
+    toast.error("Target List Was Not Deleted");
   }
 };
-// MTTODO BYT TILL ATT HÄMTA Specific target list.
+
+// Fetch specific target list details on mount
 onMounted(async () => {
   try {
-    const response = await axios.get(`/api/jobs/${jobId}`);
-    console.log(response.data); // Debug to see the structure of your data
-    state.job = response.data;
+    const response = await axios.get(
+      `/api/index.php?route=target-list-detail&id=${targetListId}`
+    );
+    console.log(response.data); // Debugging to check the response structure
+    state.targetList = response.data.targetList;
   } catch (error) {
-    console.error("Error fetching job", error);
+    console.error("Error fetching target list", error);
   } finally {
     state.isLoading = false;
   }
 });
 </script>
+
 <template>
   <BackButton />
   <section v-if="!state.isLoading" class="bg-green-50">
@@ -54,72 +62,95 @@ onMounted(async () => {
             class="bg-white p-6 rounded-lg shadow-md text-center md:text-left"
           >
             <!-- mttodo -->
-            <div class="text-gray-500 mb-4">{{ state.job.type }}</div>
+            <div class="text-gray-500 mb-4">
+              {{ state.targetList.campaign_name }}
+            </div>
             <!-- ovan, type funkar ej. -->
-            <h1 class="text-3xl font-bold mb-4">{{ state.job.title }}</h1>
+            <h1 class="text-3xl font-bold mb-4">{{ state.targetList.name }}</h1>
+
+            <p class="mb-4">
+              {{ state.targetList.description }}
+            </p>
+            <h3
+              v-if="state.targetList.end_date"
+              class="text-green-800 text-lg font-bold mb-2"
+            >
+              slut datum
+            </h3>
+
+            <p class="mb-4">{{ state.targetList.end_date }}</p>
             <div
               class="text-gray-500 mb-4 flex align-middle justify-center md:justify-start"
             >
               <i class="pi pi-map-marker text-xl text-orange-700 mr-2"></i>
-              <p class="text-orange-700">{{ state.job.location }}</p>
+              <p class="text-orange-700">{{ state.targetList.status }}</p>
             </div>
           </div>
-
-          <div class="bg-white p-6 rounded-lg shadow-md mt-6">
-            <h3 class="text-green-800 text-lg font-bold mb-6">
-              Job Description
-            </h3>
-
-            <p class="mb-4">
-              {{ state.job.description }}
+          <div
+            v-for="account in state.targetList.accounts"
+            :key="account.account_id"
+            class="bg-white p-6 rounded-lg shadow-md mt-6"
+          >
+            <h4 class="text-xl font-bold">{{ account.account_name }}</h4>
+            <hr class="my-2" />
+            <p v-if="account.industry">
+              <strong>Industry:</strong> {{ account.industry }}
             </p>
 
-            <h3 class="text-green-800 text-lg font-bold mb-2">Salary</h3>
+            <p><strong>Företags Email:</strong> {{ account.account_email }}</p>
+            <p>
+              <strong>Företags Telefon:</strong> {{ account.account_phone }}
+            </p>
 
-            <p class="mb-4">{{ state.job.salary }} / Year</p>
+            <div
+              class="text-gray-500 mb-4 flex align-middle justify-center md:justify-start"
+            >
+              <i class="pi pi-map-marker text-xl text-orange-700 mr-2"></i>
+              <p>
+                {{ account.address }}, {{ account.city }},
+                {{ account.country }}
+              </p>
+            </div>
+            <hr class="my-2" />
+            <h5 class="text-lg font-bold mt-4">Contacts</h5>
+            <ul>
+              <li
+                v-for="contact in account.contacts"
+                :key="contact.contact_id"
+                class="mb-4"
+              >
+                <p>
+                  <strong
+                    >{{ contact.first_name }} {{ contact.last_name }}</strong
+                  >
+                  - {{ contact.job_title }}
+                </p>
+                <p><strong>Email:</strong> {{ contact.contact_email }}</p>
+                <p><strong>Phone:</strong> {{ contact.contact_phone }}</p>
+                <p><strong>Status:</strong> {{ contact.contact_status }}</p>
+                <p><strong>Notes:</strong> {{ contact.notes }}</p>
+                <hr />
+              </li>
+            </ul>
           </div>
         </main>
 
         <!-- Sidebar -->
         <aside>
-          <!-- Company Info -->
-          <div class="bg-white p-6 rounded-lg shadow-md">
-            <h3 class="text-xl font-bold mb-6">Company Info</h3>
-
-            <h2 class="text-2xl">{{ state.job.company.name }}</h2>
-
-            <p class="my-2">
-              {{ state.job.company.description }}
-            </p>
-
-            <hr class="my-4" />
-
-            <h3 class="text-xl">Contact Email:</h3>
-
-            <p class="my-2 bg-green-100 p-2 font-bold">
-              {{ state.job.company.contactEmail }}
-            </p>
-
-            <h3 class="text-xl">Contact Phone:</h3>
-
-            <p class="my-2 bg-green-100 p-2 font-bold">
-              {{ state.job.company.contactPhone }}
-            </p>
-          </div>
-
-          <!-- Manage -->
+          <!-- Manage Target List -->
           <div class="bg-white p-6 rounded-lg shadow-md mt-6">
-            <h3 class="text-xl font-bold mb-6">Manage Job</h3>
+            <h3 class="text-xl font-bold mb-6">Manage Target List</h3>
             <RouterLink
-              :to="`/jobs/edit/${state.job.id}`"
+              :to="`/target-lists/edit/${state.targetList.id}`"
               class="bg-green-500 hover:bg-green-600 text-white text-center font-bold py-2 px-4 rounded-full w-full focus:outline-none focus:shadow-outline mt-4 block"
-              >Edit Job</RouterLink
             >
+              Edit Target List
+            </RouterLink>
             <button
-              @click="deleteJob"
+              @click="deleteTargetList"
               class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-full w-full focus:outline-none focus:shadow-outline mt-4 block"
             >
-              Delete Job
+              Delete Target List
             </button>
           </div>
         </aside>
