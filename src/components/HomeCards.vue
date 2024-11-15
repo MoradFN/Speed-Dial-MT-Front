@@ -8,15 +8,13 @@ import Card from "@/components/Card.vue";
     <div class="container-xl lg:container m-auto">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-lg">
         <Card>
-          <h2 class="text-2xl font-bold">For Developers</h2>
-          <p class="mt-2 mb-4">
-            Browse our Vue jobs and start your career today
-          </p>
+          <h2 class="text-2xl font-bold">Target Lists</h2>
+          <p class="mt-2 mb-4">Choose a target list to access Speed Dialer</p>
           <RouterLink
             to="/jobs"
             class="inline-block bg-black text-white rounded-lg px-4 py-2 hover:bg-gray-700"
           >
-            Browse Jobs
+            Browse Target Lists
           </RouterLink>
         </Card>
         <Card bg="bg-green-100">
