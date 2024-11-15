@@ -114,7 +114,10 @@ onMounted(async () => {
               </p>
             </div>
             <hr class="my-2" />
-            <h5 class="text-lg font-bold mt-4">Contacts</h5>
+            <div class="flex items-center justify-center md:justify-start">
+              <i class="pi pi-users text-xl text-blue-700 mr-2"></i>
+              <h5 class="text-lg font-bold mt-4">Contacts</h5>
+            </div>
             <ul>
               <li
                 v-for="contact in account.contacts"
