@@ -14,16 +14,16 @@ defineProps({
 });
 //MTTODO: BYT TILL ATT HÄMTA ALLA TARGETLISTS.
 const state = reactive({
-  jobs: [],
+  targetLists: [],
   isLoading: true,
 });
 
 onMounted(async () => {
   try {
-    const response = await axios.get("/api/jobs");
-    state.jobs = response.data;
+    const response = await axios.get("/api/index.php?route=target-lists");
+    state.targetLists = response.data;
   } catch (error) {
-    console.error("Error fetching jobs", error);
+    console.error("Error fetching target lists", error);
   } finally {
     state.isLoading = false;
   }
@@ -33,19 +33,22 @@ onMounted(async () => {
   <section class="bg-blue-50 px-4 py-10">
     <div class="container-xl lg:container m-auto">
       <h2 class="text-3xl font-bold text-green-500 mb-6 text-center">
-        Browse Jobs
+        Browse target lists
       </h2>
       <!-- Show loading spinner while loading is true -->
       <div v-if="state.isLoading" class="text-center text-gray-500 py-6">
         <PulseLoader />
       </div>
 
-      <!-- Shoe job listing when done loading -->
+      <!-- Show job listing when done loading -->
       <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <JobListing
-          v-for="job in state.jobs.slice(0, limit || state.jobs.length)"
-          :key="job.id"
-          :job="job"
+          v-for="targetList in state.targetLists.slice(
+            0,
+            limit || state.targetLists.length
+          )"
+          :key="targetList.id"
+          :target-list="targetList"
         />
       </div>
     </div>
@@ -56,7 +59,7 @@ onMounted(async () => {
     <RouterLink
       to="/jobs"
       class="block bg-black text-white text-center py-4 px-6 rounded-xl hover:bg-gray-700"
-      >View All Jobs</RouterLink
+      >View All Target Lists</RouterLink
     >
   </section>
 </template>

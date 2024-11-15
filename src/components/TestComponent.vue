@@ -12,6 +12,7 @@ onMounted(async () => {
   try {
     const response = await axios.get("/api/index.php?route=target-lists");
     console.log(response.data);
+
     targetLists.value = response.data.targetLists || [];
   } catch (error) {
     errorMessage.value = "Failed to load target lists. Please try again.";
