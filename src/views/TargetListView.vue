@@ -19,11 +19,7 @@ const state = reactive({
   isLoading: true,
   openContacts: {}, // Track open/close state for each account’s contacts
   isModalVisible: false,
-  accounts: [
-    { account_id: 1, account_name: "Acme Corporation" },
-    { account_id: 2, account_name: "Globex Corporation" },
-    { account_id: 3, account_name: "Initech" },
-  ],
+  accounts: [], // To hold accounts fetched from the API.
 });
 
 // const toggleModal = () => {
@@ -38,22 +34,8 @@ const closeModal = () => {
   state.isModalVisible = false;
 };
 
-const deleteTargetList = async () => {
-  try {
-    const confirm = window.confirm(
-      "Are you sure you want to delete this target list?"
-    );
-    if (confirm) {
-      await axios.delete(
-        `/api/index.php?route=delete-target-list&id=${targetListId}`
-      );
-      toast.success("Target List Deleted Successfully");
-      router.push("/target-lists");
-    }
-  } catch (error) {
-    console.error("Error deleting target list", error);
-    toast.error("Target List Was Not Deleted");
-  }
+const checkRecentLogs = async () => {
+  console.log("Checking recent logs...");
 };
 
 // Toggle contacts visibility for a specific account
@@ -196,7 +178,7 @@ onMounted(async () => {
             </button>
 
             <button
-              @click="deleteTargetList"
+              @click="checkRecentLogs"
               class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-full w-full focus:outline-none focus:shadow-outline mt-4 block"
             >
               Check Recent Logs
