@@ -49,10 +49,18 @@ onMounted(async () => {
     const response = await axios.get(
       `/api/index.php?route=target-list-detail&id=${targetListId}`
     );
-    console.log(response.data); // Debugging to check the response structure
+    console.log(response.data); // Debugging to check the structure.
     state.targetList = response.data.targetList;
+
+    // Populate accounts from the fetched target list.
+    if (response.data.targetList.accounts) {
+      state.accounts = response.data.targetList.accounts;
+    } else {
+      state.accounts = []; // Ensure accounts is empty if no data is returned.
+    }
   } catch (error) {
-    console.error("Error fetching target list", error);
+    console.error("Error fetching target list:", error);
+    toast.error("Failed to load target list.");
   } finally {
     state.isLoading = false;
   }
@@ -166,13 +174,11 @@ onMounted(async () => {
 
         <!-- Sidebar -->
         <aside>
-          <!-- Manage Target List -->
-          <!-- OBS ÄNDRAD TEXT, EDIT SKA ÄNDRAS TILL STARTA SPEED DIALER OCH CHECK RECENT LOGS! -->
           <div class="bg-white p-6 rounded-lg shadow-md mt-6">
             <h3 class="text-xl font-bold mb-6">Speed Dialer</h3>
             <button
               @click="openModal"
-              class="bg-green-500 text-white px-4 py-2 rounded"
+              class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full w-full focus:outline-none focus:shadow-outline mt-4 block"
             >
               Open Modal
             </button>
