@@ -38,17 +38,17 @@ const previousAccount = () => {
 // Close the modal and reset the index
 const closeModal = () => {
   emits("close");
-  state.currentAccountIndex = 0;
+  // state.currentAccountIndex = 0; // För att resetta index vid close
 };
 </script>
 
 <template>
   <div
     v-if="isVisible"
-    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center modal"
     @click.self="closeModal"
   >
-    <div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-1/3 modal-content">
       <div class="text-center">
         <h3 class="text-xl font-bold">{{ currentAccount.account_name }}</h3>
         <p>Account ID: {{ currentAccount.account_id }}</p>
@@ -60,20 +60,41 @@ const closeModal = () => {
         >
           Close
         </button>
-        <button
-          @click="previousAccount"
-          class="bg-blue-500 text-white px-4 py-2 rounded"
-        >
-          Previous
-        </button>
-
-        <button
-          @click="nextAccount"
-          class="bg-blue-500 text-white px-4 py-2 rounded"
-        >
-          Next
-        </button>
+        <div>
+          <button
+            @click="previousAccount"
+            class="bg-blue-500 text-white px-4 py-2 rounded mr-2"
+          >
+            Previous
+          </button>
+          <button
+            @click="nextAccount"
+            class="bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Next
+          </button>
+        </div>
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.modal {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* .modal-content {
+  max-height: 80vh;
+  overflow-y: auto;
+} */
+</style>
