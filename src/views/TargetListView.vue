@@ -1,5 +1,6 @@
 <script setup>
 import PulseLoader from "vue-spinner/src/PulseLoader.vue";
+import SpeedDialerModal from "@/components/SpeedDialerModal.vue";
 import BackButton from "@/components/BackButton.vue";
 import { reactive, onMounted } from "vue";
 import { useRoute, RouterLink, useRouter } from "vue-router";
@@ -17,7 +18,25 @@ const state = reactive({
   targetList: {},
   isLoading: true,
   openContacts: {}, // Track open/close state for each account’s contacts
+  isModalVisible: false,
+  accounts: [
+    { account_id: 1, account_name: "Acme Corporation" },
+    { account_id: 2, account_name: "Globex Corporation" },
+    { account_id: 3, account_name: "Initech" },
+  ],
 });
+
+// const toggleModal = () => {
+//   state.isModalVisible = !state.isModalVisible;
+// };
+
+const openModal = () => {
+  state.isModalVisible = true;
+};
+
+const closeModal = () => {
+  state.isModalVisible = false;
+};
 
 const deleteTargetList = async () => {
   try {
@@ -169,12 +188,13 @@ onMounted(async () => {
           <!-- OBS ÄNDRAD TEXT, EDIT SKA ÄNDRAS TILL STARTA SPEED DIALER OCH CHECK RECENT LOGS! -->
           <div class="bg-white p-6 rounded-lg shadow-md mt-6">
             <h3 class="text-xl font-bold mb-6">Speed Dialer</h3>
-            <RouterLink
-              :to="`/target-lists/edit/${state.targetList.id}`"
-              class="bg-green-500 hover:bg-green-600 text-white text-center font-bold py-2 px-4 rounded-full w-full focus:outline-none focus:shadow-outline mt-4 block"
+            <button
+              @click="openModal"
+              class="bg-green-500 text-white px-4 py-2 rounded"
             >
-              Start Speed Dialer
-            </RouterLink>
+              Open Modal
+            </button>
+
             <button
               @click="deleteTargetList"
               class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-full w-full focus:outline-none focus:shadow-outline mt-4 block"
@@ -190,4 +210,10 @@ onMounted(async () => {
   <div v-else class="text-center text-gray-500 py-6">
     <PulseLoader />
   </div>
+
+  <SpeedDialerModal
+    :accounts="state.accounts"
+    :isVisible="state.isModalVisible"
+    @close="closeModal"
+  />
 </template>

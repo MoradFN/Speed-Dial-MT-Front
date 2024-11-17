@@ -1,99 +1,65 @@
 <script setup>
-import { reactive, watch } from "vue";
+import { reactive, computed, defineProps, defineEmits } from "vue";
 
 const props = defineProps({
-  contacts: Array,
-  isVisible: Boolean,
+  accounts: {
+    type: Array,
+    required: true,
+  },
+  isVisible: {
+    type: Boolean,
+    required: true,
+  },
 });
 
-const emit = defineEmits(["onClose"]);
+const emits = defineEmits(["close"]);
 
 const state = reactive({
-  currentContactIndex: 0,
+  currentAccountIndex: 0, // Tracks the current account being displayed
 });
 
-// Move to the next contact
-const nextContact = () => {
-  if (state.currentContactIndex < props.contacts.length - 1) {
-    state.currentContactIndex++;
-  } else {
-    state.currentContactIndex = 0; // Loop back to the first contact
-  }
+// Compute the current account based on the index
+const currentAccount = computed(() => {
+  return props.accounts[state.currentAccountIndex] || {};
+});
+
+// Move to the next account
+const nextAccount = () => {
+  state.currentAccountIndex =
+    (state.currentAccountIndex + 1) % props.accounts.length;
 };
 
-// Move to the previous contact
-const previousContact = () => {
-  if (state.currentContactIndex > 0) {
-    state.currentContactIndex--;
-  } else {
-    state.currentContactIndex = props.contacts.length - 1; // Loop back to the last contact
-  }
-};
-
-// Close the modal
+// Close the modal and reset the index
 const closeModal = () => {
-  emit("onClose");
+  emits("close");
+  state.currentAccountIndex = 0;
 };
 </script>
 
 <template>
-  <div v-if="isVisible" class="modal">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <!-- Modal Header -->
-        <div class="modal-header">
-          <h5 class="modal-title">
-            {{ props.contacts[state.currentContactIndex]?.first_name }}
-            {{ props.contacts[state.currentContactIndex]?.last_name }}
-          </h5>
-          <button type="button" class="close" @click="closeModal">
-            &times;
-          </button>
-        </div>
-
-        <!-- Modal Body -->
-        <div class="modal-body">
-          <p>
-            <strong>Email:</strong>
-            {{ props.contacts[state.currentContactIndex]?.contact_email }}
-          </p>
-          <p>
-            <strong>Phone:</strong>
-            {{ props.contacts[state.currentContactIndex]?.contact_phone }}
-          </p>
-          <p>
-            <strong>Status:</strong>
-            {{ props.contacts[state.currentContactIndex]?.contact_status }}
-          </p>
-          <p>
-            <strong>Notes:</strong>
-            {{ props.contacts[state.currentContactIndex]?.notes }}
-          </p>
-        </div>
-
-        <!-- Modal Footer -->
-        <div class="modal-footer">
-          <button class="btn btn-secondary" @click="closeModal">Close</button>
-          <button class="btn btn-primary" @click="previousContact">
-            Previous
-          </button>
-          <button class="btn btn-primary" @click="nextContact">Next</button>
-        </div>
+  <div
+    v-if="isVisible"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+  >
+    <div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
+      <div class="text-center">
+        <h3 class="text-xl font-bold">{{ currentAccount.account_name }}</h3>
+        <p>Account ID: {{ currentAccount.account_id }}</p>
+      </div>
+      <div class="mt-6 flex justify-between">
+        <button
+          @click="closeModal"
+          class="bg-gray-500 text-white px-4 py-2 rounded"
+        >
+          Close
+        </button>
+        <button
+          @click="nextAccount"
+          class="bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          Next
+        </button>
       </div>
     </div>
   </div>
 </template>
-
-<style>
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-</style>
