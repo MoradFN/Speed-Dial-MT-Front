@@ -1,145 +1,99 @@
+<script setup>
+import { reactive, watch } from "vue";
+
+const props = defineProps({
+  contacts: Array,
+  isVisible: Boolean,
+});
+
+const emit = defineEmits(["onClose"]);
+
+const state = reactive({
+  currentContactIndex: 0,
+});
+
+// Move to the next contact
+const nextContact = () => {
+  if (state.currentContactIndex < props.contacts.length - 1) {
+    state.currentContactIndex++;
+  } else {
+    state.currentContactIndex = 0; // Loop back to the first contact
+  }
+};
+
+// Move to the previous contact
+const previousContact = () => {
+  if (state.currentContactIndex > 0) {
+    state.currentContactIndex--;
+  } else {
+    state.currentContactIndex = props.contacts.length - 1; // Loop back to the last contact
+  }
+};
+
+// Close the modal
+const closeModal = () => {
+  emit("onClose");
+};
+</script>
+
 <template>
-  <div v-if="isVisible" class="modal-overlay">
-    <div class="modal-content">
-      <button @click="closeModal" class="close-btn">✕</button>
-
-      <div v-if="contact">
-        <h2 class="text-2xl font-bold">
-          {{ contact.first_name }} {{ contact.last_name }}
-        </h2>
-        <p><strong>Phone:</strong> {{ contact.contact_phone }}</p>
-        <p><strong>Email:</strong> {{ contact.contact_email }}</p>
-        <p><strong>Notes:</strong> {{ contact.notes }}</p>
-
-        <!-- Outcome Logging Form -->
-        <div class="mt-4">
-          <label for="outcome">Outcome:</label>
-          <select v-model="outcome" id="outcome" class="input">
-            <option value="connected">Connected</option>
-            <option value="not_interested">Not Interested</option>
-            <option value="left_voicemail">Left Voicemail</option>
-          </select>
-
-          <label for="notes" class="mt-2">Notes:</label>
-          <textarea v-model="notes" id="notes" class="input"></textarea>
-
-          <button @click="logInteraction" class="primary-btn mt-4">
-            Log Outcome
+  <div v-if="isVisible" class="modal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h5 class="modal-title">
+            {{ props.contacts[state.currentContactIndex]?.first_name }}
+            {{ props.contacts[state.currentContactIndex]?.last_name }}
+          </h5>
+          <button type="button" class="close" @click="closeModal">
+            &times;
           </button>
         </div>
 
-        <!-- Navigation Controls -->
-        <div class="mt-6 flex justify-between">
-          <button
-            @click="previousContact"
-            :disabled="!hasPrevious"
-            class="secondary-btn"
-          >
+        <!-- Modal Body -->
+        <div class="modal-body">
+          <p>
+            <strong>Email:</strong>
+            {{ props.contacts[state.currentContactIndex]?.contact_email }}
+          </p>
+          <p>
+            <strong>Phone:</strong>
+            {{ props.contacts[state.currentContactIndex]?.contact_phone }}
+          </p>
+          <p>
+            <strong>Status:</strong>
+            {{ props.contacts[state.currentContactIndex]?.contact_status }}
+          </p>
+          <p>
+            <strong>Notes:</strong>
+            {{ props.contacts[state.currentContactIndex]?.notes }}
+          </p>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="modal-footer">
+          <button class="btn btn-secondary" @click="closeModal">Close</button>
+          <button class="btn btn-primary" @click="previousContact">
             Previous
           </button>
-          <button
-            @click="nextContact"
-            :disabled="!hasNext"
-            class="secondary-btn"
-          >
-            Next
-          </button>
+          <button class="btn btn-primary" @click="nextContact">Next</button>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script setup>
-import { ref, computed } from "vue";
-import { useRouter } from "vue-router";
-import { useToast } from "vue-toastification";
-
-const props = defineProps({
-  contacts: Array,
-  isVisible: Boolean,
-  onClose: Function,
-});
-
-const router = useRouter();
-const toast = useToast();
-
-const contactIndex = ref(0);
-const outcome = ref("");
-const notes = ref("");
-
-const contact = computed(() => props.contacts[contactIndex.value]);
-
-const hasPrevious = computed(() => contactIndex.value > 0);
-const hasNext = computed(() => contactIndex.value < props.contacts.length - 1);
-
-const closeModal = () => {
-  props.onClose();
-};
-
-const previousContact = () => {
-  if (hasPrevious.value) contactIndex.value--;
-};
-
-const nextContact = () => {
-  if (hasNext.value) contactIndex.value++;
-};
-
-const logInteraction = () => {
-  if (!outcome.value) {
-    toast.error("Please select an outcome.");
-    return;
-  }
-  // Here you would send the interaction data to the backend
-  console.log(`Logged outcome: ${outcome.value}, notes: ${notes.value}`);
-  toast.success("Interaction logged successfully!");
-  outcome.value = "";
-  notes.value = "";
-};
-</script>
-
-<style scoped>
-.modal-overlay {
+<style>
+.modal {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
-}
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 600px;
-}
-.close-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: transparent;
-  border: none;
-  font-size: 1.5rem;
-}
-.input {
-  width: 100%;
-  padding: 8px;
-  margin-top: 8px;
-}
-.primary-btn {
-  background-color: #38a169;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 4px;
-}
-.secondary-btn {
-  background-color: #4299e1;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 4px;
 }
 </style>
