@@ -180,7 +180,7 @@ onMounted(async () => {
               @click="openModal"
               class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full w-full focus:outline-none focus:shadow-outline mt-4 block"
             >
-              Open Modal
+              Open Speed Dialer
             </button>
 
             <button
