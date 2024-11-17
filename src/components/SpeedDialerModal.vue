@@ -48,37 +48,80 @@ const closeModal = () => {
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center modal"
     @click.self="closeModal"
   >
-    <div class="bg-white p-6 rounded-lg shadow-lg w-1/3 modal-content">
+    <div
+      class="bg-white p-8 rounded-lg shadow-lg w-2/3 max-w-4xl modal-content"
+    >
       <!-- Account Details -->
-      <div class="text-center">
-        <h3 class="text-xl font-bold">{{ currentAccount.account_name }}</h3>
-        <p>Account ID: {{ currentAccount.account_id }}</p>
-        <p v-if="currentAccount.industry">
-          <strong>Industry:</strong> {{ currentAccount.industry }}
-        </p>
-        <p v-if="currentAccount.account_email">
-          <strong>Email:</strong> {{ currentAccount.account_email }}
-        </p>
-        <p v-if="currentAccount.account_phone">
-          <strong>Phone:</strong> {{ currentAccount.account_phone }}
-        </p>
-        <p v-if="currentAccount.address">
-          <strong>Address:</strong>
-          {{ currentAccount.address }}, {{ currentAccount.city }},
-          {{ currentAccount.state }} {{ currentAccount.postal_code }},
-          {{ currentAccount.country }}
-        </p>
+      <div class="p-6 border-b border-gray-200 mb-6">
+        <div class="text-center">
+          <!-- Account Name and ID -->
+          <h3 class="text-3xl font-bold text-green-700">
+            {{ currentAccount.account_name }}
+          </h3>
+          <p class="text-sm text-gray-500">
+            Account ID: {{ currentAccount.account_id }}
+          </p>
+          <p v-if="currentAccount.industry" class="text-sm text-gray-500">
+            <span class="text-gray-700">Industry:</span>
+            {{ currentAccount.industry }}
+          </p>
+        </div>
+
+        <!-- Email and Phone -->
+        <div class="flex justify-between items-center mt-6">
+          <p v-if="currentAccount.account_email" class="flex-1">
+            <span class="font-semibold text-gray-700">Email:</span>
+            <a
+              :href="`mailto:${currentAccount.account_email}`"
+              class="text-blue-600 underline"
+            >
+              {{ currentAccount.account_email }}
+            </a>
+          </p>
+          <p v-if="currentAccount.account_phone" class="flex-1 text-right">
+            <span class="font-semibold text-gray-700">Phone:</span>
+            <a
+              :href="`tel:${currentAccount.account_phone}`"
+              class="text-blue-600 underline"
+            >
+              {{ currentAccount.account_phone }}
+            </a>
+          </p>
+        </div>
+
+        <!-- Address and Webpage -->
+        <div class="flex justify-between items-center mt-4">
+          <p v-if="currentAccount.address" class="flex-1">
+            <span class="font-semibold text-gray-700">Address:</span>
+            {{ currentAccount.city ? `${currentAccount.city},` : "" }}
+            {{ currentAccount.state ? `${currentAccount.state}` : "" }}
+          </p>
+          <p v-if="currentAccount.website" class="flex-1 text-right">
+            <span class="font-semibold text-gray-700">Webpage:</span>
+            <a
+              :href="
+                currentAccount.website.startsWith('http')
+                  ? currentAccount.website
+                  : `http://${currentAccount.website}`
+              "
+              target="_blank"
+              class="text-blue-600 underline"
+            >
+              {{ currentAccount.website }}
+            </a>
+          </p>
+        </div>
       </div>
-      <!-- // Account Details -->
+
       <!-- Contacts List -->
-      <div class="mt-6">
-        <h4 class="text-lg font-bold mb-3">Contacts</h4>
+      <div class="p-6 border-b border-gray-200">
+        <h4 class="text-xl font-bold mb-4">Contacts</h4>
         <div v-if="currentAccount.contacts && currentAccount.contacts.length">
           <ul>
             <li
               v-for="contact in currentAccount.contacts"
               :key="contact.contact_id"
-              class="mb-4 border-b pb-2"
+              class="mb-4 pb-2 border-b"
             >
               <p>
                 <strong
@@ -103,25 +146,25 @@ const closeModal = () => {
         </div>
         <p v-else>No contacts available for this account.</p>
       </div>
-      <!-- // Contacts List -->
 
+      <!-- Navigation Buttons -->
       <div class="mt-6 flex justify-between">
         <button
           @click="closeModal"
-          class="bg-gray-500 text-white px-4 py-2 rounded"
+          class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600"
         >
           Close
         </button>
         <div>
           <button
             @click="previousAccount"
-            class="bg-blue-500 text-white px-4 py-2 rounded mr-2"
+            class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 mr-2"
           >
             Previous
           </button>
           <button
             @click="nextAccount"
-            class="bg-blue-500 text-white px-4 py-2 rounded"
+            class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
           >
             Next
           </button>
