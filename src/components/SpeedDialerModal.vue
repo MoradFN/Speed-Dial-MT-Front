@@ -49,10 +49,62 @@ const closeModal = () => {
     @click.self="closeModal"
   >
     <div class="bg-white p-6 rounded-lg shadow-lg w-1/3 modal-content">
+      <!-- Account Details -->
       <div class="text-center">
         <h3 class="text-xl font-bold">{{ currentAccount.account_name }}</h3>
         <p>Account ID: {{ currentAccount.account_id }}</p>
+        <p v-if="currentAccount.industry">
+          <strong>Industry:</strong> {{ currentAccount.industry }}
+        </p>
+        <p v-if="currentAccount.account_email">
+          <strong>Email:</strong> {{ currentAccount.account_email }}
+        </p>
+        <p v-if="currentAccount.account_phone">
+          <strong>Phone:</strong> {{ currentAccount.account_phone }}
+        </p>
+        <p v-if="currentAccount.address">
+          <strong>Address:</strong>
+          {{ currentAccount.address }}, {{ currentAccount.city }},
+          {{ currentAccount.state }} {{ currentAccount.postal_code }},
+          {{ currentAccount.country }}
+        </p>
       </div>
+      <!-- // Account Details -->
+      <!-- Contacts List -->
+      <div class="mt-6">
+        <h4 class="text-lg font-bold mb-3">Contacts</h4>
+        <div v-if="currentAccount.contacts && currentAccount.contacts.length">
+          <ul>
+            <li
+              v-for="contact in currentAccount.contacts"
+              :key="contact.contact_id"
+              class="mb-4 border-b pb-2"
+            >
+              <p>
+                <strong
+                  >{{ contact.first_name }} {{ contact.last_name }}</strong
+                >
+                - {{ contact.job_title || "N/A" }}
+              </p>
+              <p v-if="contact.contact_email">
+                <strong>Email:</strong> {{ contact.contact_email }}
+              </p>
+              <p v-if="contact.contact_phone">
+                <strong>Phone:</strong> {{ contact.contact_phone }}
+              </p>
+              <p v-if="contact.mobile_phone">
+                <strong>Mobile:</strong> {{ contact.mobile_phone }}
+              </p>
+              <p v-if="contact.notes">
+                <strong>Notes:</strong> {{ contact.notes }}
+              </p>
+            </li>
+          </ul>
+        </div>
+        <p v-else>No contacts available for this account.</p>
+      </div>
+      <!-- // Contacts List -->
+
       <div class="mt-6 flex justify-between">
         <button
           @click="closeModal"
