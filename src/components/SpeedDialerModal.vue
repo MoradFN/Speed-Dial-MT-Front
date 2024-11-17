@@ -29,6 +29,12 @@ const nextAccount = () => {
     (state.currentAccountIndex + 1) % props.accounts.length;
 };
 
+const previousAccount = () => {
+  state.currentAccountIndex =
+    (state.currentAccountIndex - 1 + props.accounts.length) %
+    props.accounts.length;
+};
+
 // Close the modal and reset the index
 const closeModal = () => {
   emits("close");
@@ -40,6 +46,7 @@ const closeModal = () => {
   <div
     v-if="isVisible"
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+    @click.self="closeModal"
   >
     <div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
       <div class="text-center">
@@ -53,6 +60,13 @@ const closeModal = () => {
         >
           Close
         </button>
+        <button
+          @click="previousAccount"
+          class="bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          Previous
+        </button>
+
         <button
           @click="nextAccount"
           class="bg-blue-500 text-white px-4 py-2 rounded"
