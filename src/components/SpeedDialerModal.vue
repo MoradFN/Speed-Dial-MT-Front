@@ -126,7 +126,8 @@ const closeModal = () => {
             <li
               v-for="contact in currentAccount.contacts"
               :key="contact.contact_id"
-              class="mb-4 p-4 border rounded-md shadow-sm bg-blue-50"
+              @click="contact.showDetails = !contact.showDetails"
+              class="mb-4 p-4 border rounded-md shadow-sm bg-blue-50 cursor-pointer hover:bg-blue-100 transition"
             >
               <div class="flex justify-between items-center">
                 <!-- Contact Name and Status -->
@@ -171,26 +172,18 @@ const closeModal = () => {
                 </div>
               </div>
               <!-- Expandable Notes Section -->
-              <div class="mt-3">
+              <div v-if="contact.showDetails" class="mt-3">
+                <p>
+                  <span class="font-semibold">Notes:</span>
+                  {{ contact.notes || "No notes available." }}
+                </p>
+                <!-- Log Call Outcome Button -->
                 <button
-                  @click="contact.showDetails = !contact.showDetails"
-                  class="text-blue-500 hover:text-blue-700 font-semibold"
+                  @click.stop="logCallOutcome(contact)"
+                  class="mt-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded shadow-sm"
                 >
-                  {{ contact.showDetails ? "Hide Details" : "View Details" }}
+                  Log Call Outcome
                 </button>
-                <div v-if="contact.showDetails" class="mt-3">
-                  <p>
-                    <span class="font-semibold">Notes:</span>
-                    {{ contact.notes || "No notes available." }}
-                  </p>
-                  <!-- Log Call Outcome Button -->
-                  <button
-                    @click="logCallOutcome(contact)"
-                    class="mt-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded shadow-sm"
-                  >
-                    Log Call Outcome
-                  </button>
-                </div>
               </div>
             </li>
           </ul>
