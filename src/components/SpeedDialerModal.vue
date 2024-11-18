@@ -62,7 +62,7 @@ const closeModal = () => {
     <!-- Modal Size -->
     <!-- Put max height and scrolling. -->
     <div
-      class="bg-white p-8 rounded-lg shadow-lg w-3/4 max-w-6xl min-h-[600px] modal-content flex flex-col"
+      class="bg-white p-8 rounded-lg shadow-lg w-3/4 max-w-6xl min-h-[600px] max-h-[90vh] modal-content overflow-y-auto flex flex-col"
     >
       <!-- Account Details -->
       <div class="flex-1">
@@ -296,6 +296,10 @@ const closeModal = () => {
 .modal {
   animation: fadeIn 0.3s ease-in-out;
 }
+/* .modal-content {
+  max-height: 90vh;
+  overflow-y: auto;
+} */
 
 @keyframes fadeIn {
   from {
@@ -305,9 +309,4 @@ const closeModal = () => {
     opacity: 1;
   }
 }
-
-/* .modal-content {
-  max-height: 80vh;
-  overflow-y: auto;
-} */
 </style>
