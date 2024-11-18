@@ -182,6 +182,9 @@ const goToPage = (page) => {
               } order`"
             >
               User Name
+              <span v-if="state.orderBy === 'user_name'">
+                {{ state.direction === "ASC" ? "▲" : "▼" }}
+              </span>
             </th>
             <th
               @click="sortBy('campaign_name')"
@@ -192,6 +195,9 @@ const goToPage = (page) => {
               } order`"
             >
               Campaign Name
+              <span v-if="state.orderBy === 'campaign_name'">
+                {{ state.direction === "ASC" ? "▲" : "▼" }}
+              </span>
             </th>
             <th>Campaign Description</th>
             <th
@@ -207,6 +213,9 @@ const goToPage = (page) => {
               } order`"
             >
               Campaign Start Date
+              <span v-if="state.orderBy === 'campaign_start_date'">
+                {{ state.direction === "ASC" ? "▲" : "▼" }}
+              </span>
             </th>
             <th
               @click="sortBy('campaign_end_date')"
@@ -219,6 +228,9 @@ const goToPage = (page) => {
               } order`"
             >
               Campaign End Date
+              <span v-if="state.orderBy === 'campaign_end_date'">
+                {{ state.direction === "ASC" ? "▲" : "▼" }}
+              </span>
             </th>
             <th
               @click="sortBy('campaign_status')"
@@ -229,6 +241,9 @@ const goToPage = (page) => {
               } order`"
             >
               Campaign Status
+              <span v-if="state.orderBy === 'campaign_status'">
+                {{ state.direction === "ASC" ? "▲" : "▼" }}
+              </span>
             </th>
             <th
               @click="sortBy('target_list_name')"
@@ -241,6 +256,9 @@ const goToPage = (page) => {
               } order`"
             >
               Target List Name
+              <span v-if="state.orderBy === 'target_list_name'">
+                {{ state.direction === "ASC" ? "▲" : "▼" }}
+              </span>
             </th>
             <th>Target List Description</th>
             <th
@@ -252,6 +270,9 @@ const goToPage = (page) => {
               } order`"
             >
               Account Name
+              <span v-if="state.orderBy === 'account_name'">
+                {{ state.direction === "ASC" ? "▲" : "▼" }}
+              </span>
             </th>
             <th
               @click="sortBy('contact_name')"
@@ -262,6 +283,9 @@ const goToPage = (page) => {
               } order`"
             >
               Contact Name
+              <span v-if="state.orderBy === 'contact_name'">
+                {{ state.direction === "ASC" ? "▲" : "▼" }}
+              </span>
             </th>
             <th
               @click="sortBy('contact_interaction_outcome')"
@@ -276,6 +300,9 @@ const goToPage = (page) => {
               } order`"
             >
               Contact Outcome
+              <span v-if="state.orderBy === 'contact_interaction_outcome'">
+                {{ state.direction === "ASC" ? "▲" : "▼" }}
+              </span>
             </th>
             <th
               @click="sortBy('contact_phone')"
@@ -286,6 +313,9 @@ const goToPage = (page) => {
               } order`"
             >
               Contact Phone
+              <span v-if="state.orderBy === 'contact_phone'">
+                {{ state.direction === "ASC" ? "▲" : "▼" }}
+              </span>
             </th>
             <th>Contact Notes</th>
             <th
@@ -301,6 +331,9 @@ const goToPage = (page) => {
               } order`"
             >
               Contacted At
+              <span v-if="state.orderBy === 'contact_contacted_at'">
+                {{ state.direction === "ASC" ? "▲" : "▼" }}
+              </span>
             </th>
             <th
               @click="sortBy('contact_next_contact_date')"
@@ -315,6 +348,9 @@ const goToPage = (page) => {
               } order`"
             >
               Next Contact Date
+              <span v-if="state.orderBy === 'contact_next_contact_date'">
+                {{ state.direction === "ASC" ? "▲" : "▼" }}
+              </span>
             </th>
             <th>Interaction Duration</th>
           </tr>
