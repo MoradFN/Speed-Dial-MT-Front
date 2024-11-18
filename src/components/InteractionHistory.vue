@@ -38,12 +38,9 @@ const fetchInteractions = async () => {
       direction: state.direction,
       ...state.filters,
     };
-    const response = await axios.get(
-      "/api/index.php?route=interaction-history",
-      {
-        params,
-      }
-    );
+    const response = await axios.get("/index.php?route=interaction-history", {
+      params,
+    });
     const data = response.data;
     state.interactions = data.interactionHistory || [];
     state.totalPages = data.totalPages || 1;
