@@ -18,15 +18,15 @@ import Card from "@/components/Card.vue";
           </RouterLink>
         </Card>
         <Card bg="bg-green-100">
-          <h2 class="text-2xl font-bold">For Employers</h2>
+          <h2 class="text-2xl font-bold">Interaction History</h2>
           <p class="mt-2 mb-4">
-            List your job to find the perfect developer for the role
+            View and filter through the logged interactions
           </p>
           <RouterLink
             to="/jobs/add"
             class="inline-block bg-green-500 text-white rounded-lg px-4 py-2 hover:bg-green-600"
           >
-            Add Job
+            Browse Interactions
           </RouterLink>
         </Card>
       </div>
