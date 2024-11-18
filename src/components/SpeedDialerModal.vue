@@ -11,6 +11,10 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
+  targetListId: {
+    type: [Number, String],
+    required: true,
+  },
 });
 
 const emits = defineEmits(["close"]);
@@ -45,11 +49,11 @@ const logInteraction = async (contact) => {
       return;
     }
 
-    // Prepare the payload using contact and currentAccount
+    // Prepare the payload
     const payload = {
       contact_id: contact.contact_id,
-      user_id: 1, // Replace with actual user ID if available
-      target_list_id: currentAccount.value.target_list_id || 1, // Use actual target list ID
+      user_id: 1, // Replace with the actual user ID if available
+      target_list_id: props.targetListId, // Use the dynamically passed target list ID
       next_contact_date: contact.nextContactDate,
       notes: contact.notesInput,
       outcome: contact.callOutcome,

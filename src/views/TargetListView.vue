@@ -202,6 +202,7 @@ onMounted(async () => {
   <SpeedDialerModal
     :accounts="state.accounts"
     :isVisible="state.isModalVisible"
+    :targetListId="targetListId"
     @close="closeModal"
   />
 </template>
