@@ -35,8 +35,15 @@ const previousAccount = () => {
     props.accounts.length;
 };
 
-const logCallOutcome = (contact) => {
-  console.log(`Logging call outcome for contact ID: ${contact.contact_id}`);
+// Log interaction
+const logInteraction = (contact) => {
+  console.log("Call Outcome:", contact.callOutcome);
+  console.log("Notes:", contact.notesInput);
+  console.log("Next Contact Date:", contact.nextContactDate);
+  // Reset inputs
+  contact.callOutcome = "";
+  contact.notesInput = "";
+  contact.nextContactDate = null;
 };
 
 // Close the modal and reset the index
