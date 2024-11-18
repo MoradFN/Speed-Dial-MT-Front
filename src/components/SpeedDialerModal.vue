@@ -55,7 +55,7 @@ const closeModal = () => {
     <!-- Modal Size -->
     <!-- Put max height and scrolling. -->
     <div
-      class="bg-white p-8 rounded-lg shadow-lg w-3/4 max-w-6xl min-h-[600px] modal-content"
+      class="bg-white p-8 rounded-lg shadow-lg w-3/4 max-w-6xl min-h-[600px] modal-content flex flex-col"
     >
       <!-- Account Details -->
       <div class="flex-1">
