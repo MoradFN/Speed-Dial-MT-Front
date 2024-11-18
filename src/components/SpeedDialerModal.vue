@@ -53,11 +53,12 @@ const closeModal = () => {
     @click.self="closeModal"
   >
     <!-- Modal Size -->
+    <!-- Put max height and scrolling. -->
     <div
       class="bg-white p-8 rounded-lg shadow-lg w-3/4 max-w-6xl min-h-[600px] modal-content"
     >
       <!-- Account Details -->
-      <div class="p-6 border-b border-gray-200 mb-6">
+      <div class="flex-1">
         <div class="text-center">
           <!-- Account Name and ID -->
           <h3 class="text-3xl font-bold text-green-700">
@@ -119,7 +120,7 @@ const closeModal = () => {
       </div>
 
       <!-- Contacts List -->
-      <div class="mt-6">
+      <div class="flex-1 overflow-y-auto">
         <h4 class="text-xl font-bold mb-4">Contacts</h4>
         <div v-if="currentAccount.contacts && currentAccount.contacts.length">
           <ul>
@@ -192,7 +193,7 @@ const closeModal = () => {
       </div>
 
       <!-- Navigation Buttons -->
-      <div class="mt-6 flex justify-between">
+      <div class="mt-6 flex justify-between items-center border-t pt-4">
         <button
           @click="closeModal"
           class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600"
