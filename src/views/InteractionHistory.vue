@@ -2,16 +2,17 @@
 import { ref, reactive, onMounted, watch } from "vue";
 import axios from "axios";
 
-// Reactive state for interaction history data
+// Reactive state for interaction history
 const state = reactive({
-  interactions: [],
-  totalPages: 0,
+  interactions: [], // Fetched interaction history
+  totalPages: 1,
   totalRecords: 0,
   page: 1,
   limit: 10,
   orderBy: "contact_contacted_at",
   direction: "DESC",
   filters: {
+    user_name: "",
     campaign_name: "",
     campaign_status: "",
     target_list_name: "",
@@ -27,9 +28,11 @@ const state = reactive({
   error: null,
 });
 
-// Fetch interaction history data from the API
+// Fetch data from the backend
 const fetchInteractions = async () => {
   state.isLoading = true;
+  state.error = null;
+
   try {
     const params = {
       page: state.page,
@@ -38,26 +41,30 @@ const fetchInteractions = async () => {
       direction: state.direction,
       ...state.filters,
     };
+
     const response = await axios.get(
       "/api/index.php?route=interaction-history",
       {
         params,
       }
     );
+
     const data = response.data;
     state.interactions = data.interactionHistory || [];
     state.totalPages = data.totalPages || 1;
     state.totalRecords = data.totalRecords || 0;
   } catch (error) {
-    state.error = "Failed to fetch interaction history. Please try again.";
+    state.error = "Failed to load interaction history. Please try again.";
     console.error(error);
   } finally {
     state.isLoading = false;
   }
 };
 
-// Fetch data on component mount and when relevant state changes
+// Fetch data on component mount
 onMounted(fetchInteractions);
+
+// Watch for changes to pagination or filters
 watch(
   [() => state.page, () => state.orderBy, () => state.filters],
   fetchInteractions
@@ -73,7 +80,7 @@ const sortBy = (column) => {
   }
 };
 
-// Handle pagination
+// Handle pagination// Handle pagination
 const goToPage = (page) => {
   if (page > 0 && page <= state.totalPages) {
     state.page = page;
@@ -169,15 +176,23 @@ const goToPage = (page) => {
             <th @click="sortBy('user_name')">User Name</th>
             <th @click="sortBy('campaign_name')">Campaign Name</th>
             <th>Campaign Description</th>
-            <th @click="sortBy('campaign_start_date')">Start Date</th>
-            <th @click="sortBy('campaign_end_date')">End Date</th>
-            <th @click="sortBy('campaign_status')">Status</th>
-            <th @click="sortBy('target_list_name')">Target List</th>
-            <th>Account Name</th>
-            <th>Contact Name</th>
-            <th @click="sortBy('contact_phone')">Phone</th>
+            <th @click="sortBy('campaign_start_date')">Campaign Start Date</th>
+            <th @click="sortBy('campaign_end_date')">Campaign End Date</th>
+            <th @click="sortBy('campaign_status')">Campaign Status</th>
+            <th @click="sortBy('target_list_name')">Target List Name</th>
+            <th>Target List Description</th>
+            <th @click="sortBy('account_name')">Account Name</th>
+            <th @click="sortBy('contact_name')">Contact Name</th>
+            <th @click="sortBy('contact_interaction_outcome')">
+              Contact Outcome
+            </th>
+            <th @click="sortBy('contact_phone')">Contact Phone</th>
+            <th>Contact Notes</th>
             <th @click="sortBy('contact_contacted_at')">Contacted At</th>
-            <th>Notes</th>
+            <th @click="sortBy('contact_next_contact_date')">
+              Next Contact Date
+            </th>
+            <th>Interaction Duration</th>
           </tr>
         </thead>
         <tbody>
@@ -189,11 +204,15 @@ const goToPage = (page) => {
             <td>{{ interaction.campaign_end_date }}</td>
             <td>{{ interaction.campaign_status }}</td>
             <td>{{ interaction.target_list_name }}</td>
+            <td>{{ interaction.target_list_description }}</td>
             <td>{{ interaction.account_name }}</td>
             <td>{{ interaction.contact_name }}</td>
+            <td>{{ interaction.contact_interaction_outcome }}</td>
             <td>{{ interaction.contact_phone }}</td>
-            <td>{{ interaction.contact_contacted_at }}</td>
             <td>{{ interaction.contact_notes }}</td>
+            <td>{{ interaction.contact_contacted_at }}</td>
+            <td>{{ interaction.contact_next_contact_date }}</td>
+            <td>{{ interaction.contact_interaction_duration }}</td>
           </tr>
         </tbody>
       </table>
