@@ -2,17 +2,16 @@
 import { ref, reactive, onMounted, watch } from "vue";
 import axios from "axios";
 
-// Reactive state for interaction history
+// Reactive state for interaction history data
 const state = reactive({
-  interactions: [], // Fetched interaction history
-  totalPages: 1,
+  interactions: [],
+  totalPages: 0,
   totalRecords: 0,
   page: 1,
-  limit: 5,
+  limit: 10,
   orderBy: "contact_contacted_at",
   direction: "DESC",
   filters: {
-    user_name: "",
     campaign_name: "",
     campaign_status: "",
     target_list_name: "",
@@ -28,11 +27,9 @@ const state = reactive({
   error: null,
 });
 
-// Fetch data from the backend
+// Fetch interaction history data from the API
 const fetchInteractions = async () => {
   state.isLoading = true;
-  state.error = null;
-
   try {
     const params = {
       page: state.page,
@@ -41,30 +38,26 @@ const fetchInteractions = async () => {
       direction: state.direction,
       ...state.filters,
     };
-
     const response = await axios.get(
       "/api/index.php?route=interaction-history",
       {
         params,
       }
     );
-
     const data = response.data;
     state.interactions = data.interactionHistory || [];
     state.totalPages = data.totalPages || 1;
     state.totalRecords = data.totalRecords || 0;
   } catch (error) {
-    state.error = "Failed to load interaction history. Please try again.";
+    state.error = "Failed to fetch interaction history. Please try again.";
     console.error(error);
   } finally {
     state.isLoading = false;
   }
 };
 
-// Fetch data on component mount
+// Fetch data on component mount and when relevant state changes
 onMounted(fetchInteractions);
-
-// Watch for changes to pagination or filters
 watch(
   [() => state.page, () => state.orderBy, () => state.filters],
   fetchInteractions
@@ -80,7 +73,7 @@ const sortBy = (column) => {
   }
 };
 
-// Handle pagination// Handle pagination
+// Handle pagination
 const goToPage = (page) => {
   if (page > 0 && page <= state.totalPages) {
     state.page = page;
@@ -173,186 +166,18 @@ const goToPage = (page) => {
       <table class="table-auto w-full bg-white border rounded-lg shadow-md">
         <thead>
           <tr>
-            <th
-              @click="sortBy('user_name')"
-              :class="{ 'bg-gray-200': state.orderBy === 'user_name' }"
-              style="cursor: pointer"
-              :aria-label="`Sort by ${
-                state.orderBy === 'user_name' ? 'descending' : 'ascending'
-              } order`"
-            >
-              User Name
-              <span v-if="state.orderBy === 'user_name'">
-                {{ state.direction === "ASC" ? "▲" : "▼" }}
-              </span>
-            </th>
-            <th
-              @click="sortBy('campaign_name')"
-              :class="{ 'bg-gray-200': state.orderBy === 'campaign_name' }"
-              style="cursor: pointer"
-              :aria-label="`Sort by ${
-                state.orderBy === 'campaign_name' ? 'descending' : 'ascending'
-              } order`"
-            >
-              Campaign Name
-              <span v-if="state.orderBy === 'campaign_name'">
-                {{ state.direction === "ASC" ? "▲" : "▼" }}
-              </span>
-            </th>
+            <th @click="sortBy('user_name')">User Name</th>
+            <th @click="sortBy('campaign_name')">Campaign Name</th>
             <th>Campaign Description</th>
-            <th
-              @click="sortBy('campaign_start_date')"
-              :class="{
-                'bg-gray-200': state.orderBy === 'campaign_start_date',
-              }"
-              style="cursor: pointer"
-              :aria-label="`Sort by ${
-                state.orderBy === 'campaign_start_date'
-                  ? 'descending'
-                  : 'ascending'
-              } order`"
-            >
-              Campaign Start Date
-              <span v-if="state.orderBy === 'campaign_start_date'">
-                {{ state.direction === "ASC" ? "▲" : "▼" }}
-              </span>
-            </th>
-            <th
-              @click="sortBy('campaign_end_date')"
-              :class="{ 'bg-gray-200': state.orderBy === 'campaign_end_date' }"
-              style="cursor: pointer"
-              :aria-label="`Sort by ${
-                state.orderBy === 'campaign_end_date'
-                  ? 'descending'
-                  : 'ascending'
-              } order`"
-            >
-              Campaign End Date
-              <span v-if="state.orderBy === 'campaign_end_date'">
-                {{ state.direction === "ASC" ? "▲" : "▼" }}
-              </span>
-            </th>
-            <th
-              @click="sortBy('campaign_status')"
-              :class="{ 'bg-gray-200': state.orderBy === 'campaign_status' }"
-              style="cursor: pointer"
-              :aria-label="`Sort by ${
-                state.orderBy === 'campaign_status' ? 'descending' : 'ascending'
-              } order`"
-            >
-              Campaign Status
-              <span v-if="state.orderBy === 'campaign_status'">
-                {{ state.direction === "ASC" ? "▲" : "▼" }}
-              </span>
-            </th>
-            <th
-              @click="sortBy('target_list_name')"
-              :class="{ 'bg-gray-200': state.orderBy === 'target_list_name' }"
-              style="cursor: pointer"
-              :aria-label="`Sort by ${
-                state.orderBy === 'target_list_name'
-                  ? 'descending'
-                  : 'ascending'
-              } order`"
-            >
-              Target List Name
-              <span v-if="state.orderBy === 'target_list_name'">
-                {{ state.direction === "ASC" ? "▲" : "▼" }}
-              </span>
-            </th>
-            <th>Target List Description</th>
-            <th
-              @click="sortBy('account_name')"
-              :class="{ 'bg-gray-200': state.orderBy === 'account_name' }"
-              style="cursor: pointer"
-              :aria-label="`Sort by ${
-                state.orderBy === 'account_name' ? 'descending' : 'ascending'
-              } order`"
-            >
-              Account Name
-              <span v-if="state.orderBy === 'account_name'">
-                {{ state.direction === "ASC" ? "▲" : "▼" }}
-              </span>
-            </th>
-            <th
-              @click="sortBy('contact_name')"
-              :class="{ 'bg-gray-200': state.orderBy === 'contact_name' }"
-              style="cursor: pointer"
-              :aria-label="`Sort by ${
-                state.orderBy === 'contact_name' ? 'descending' : 'ascending'
-              } order`"
-            >
-              Contact Name
-              <span v-if="state.orderBy === 'contact_name'">
-                {{ state.direction === "ASC" ? "▲" : "▼" }}
-              </span>
-            </th>
-            <th
-              @click="sortBy('contact_interaction_outcome')"
-              :class="{
-                'bg-gray-200': state.orderBy === 'contact_interaction_outcome',
-              }"
-              style="cursor: pointer"
-              :aria-label="`Sort by ${
-                state.orderBy === 'contact_interaction_outcome'
-                  ? 'descending'
-                  : 'ascending'
-              } order`"
-            >
-              Contact Outcome
-              <span v-if="state.orderBy === 'contact_interaction_outcome'">
-                {{ state.direction === "ASC" ? "▲" : "▼" }}
-              </span>
-            </th>
-            <th
-              @click="sortBy('contact_phone')"
-              :class="{ 'bg-gray-200': state.orderBy === 'contact_phone' }"
-              style="cursor: pointer"
-              :aria-label="`Sort by ${
-                state.orderBy === 'contact_phone' ? 'descending' : 'ascending'
-              } order`"
-            >
-              Contact Phone
-              <span v-if="state.orderBy === 'contact_phone'">
-                {{ state.direction === "ASC" ? "▲" : "▼" }}
-              </span>
-            </th>
-            <th>Contact Notes</th>
-            <th
-              @click="sortBy('contact_contacted_at')"
-              :class="{
-                'bg-gray-200': state.orderBy === 'contact_contacted_at',
-              }"
-              style="cursor: pointer"
-              :aria-label="`Sort by ${
-                state.orderBy === 'contact_contacted_at'
-                  ? 'descending'
-                  : 'ascending'
-              } order`"
-            >
-              Contacted At
-              <span v-if="state.orderBy === 'contact_contacted_at'">
-                {{ state.direction === "ASC" ? "▲" : "▼" }}
-              </span>
-            </th>
-            <th
-              @click="sortBy('contact_next_contact_date')"
-              :class="{
-                'bg-gray-200': state.orderBy === 'contact_next_contact_date',
-              }"
-              style="cursor: pointer"
-              :aria-label="`Sort by ${
-                state.orderBy === 'contact_next_contact_date'
-                  ? 'descending'
-                  : 'ascending'
-              } order`"
-            >
-              Next Contact Date
-              <span v-if="state.orderBy === 'contact_next_contact_date'">
-                {{ state.direction === "ASC" ? "▲" : "▼" }}
-              </span>
-            </th>
-            <th>Interaction Duration</th>
+            <th @click="sortBy('campaign_start_date')">Start Date</th>
+            <th @click="sortBy('campaign_end_date')">End Date</th>
+            <th @click="sortBy('campaign_status')">Status</th>
+            <th @click="sortBy('target_list_name')">Target List</th>
+            <th>Account Name</th>
+            <th>Contact Name</th>
+            <th @click="sortBy('contact_phone')">Phone</th>
+            <th @click="sortBy('contact_contacted_at')">Contacted At</th>
+            <th>Notes</th>
           </tr>
         </thead>
         <tbody>
@@ -364,15 +189,11 @@ const goToPage = (page) => {
             <td>{{ interaction.campaign_end_date }}</td>
             <td>{{ interaction.campaign_status }}</td>
             <td>{{ interaction.target_list_name }}</td>
-            <td>{{ interaction.target_list_description }}</td>
             <td>{{ interaction.account_name }}</td>
             <td>{{ interaction.contact_name }}</td>
-            <td>{{ interaction.contact_interaction_outcome }}</td>
             <td>{{ interaction.contact_phone }}</td>
-            <td>{{ interaction.contact_notes }}</td>
             <td>{{ interaction.contact_contacted_at }}</td>
-            <td>{{ interaction.contact_next_contact_date }}</td>
-            <td>{{ interaction.contact_interaction_duration }}</td>
+            <td>{{ interaction.contact_notes }}</td>
           </tr>
         </tbody>
       </table>
