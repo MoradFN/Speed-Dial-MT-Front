@@ -4,7 +4,7 @@ import HomeView from "@/views/HomeView.vue";
 import TargetLists from "@/views/TargetListsView.vue"; // JobsView
 import NotFoundView from "@/views/NotFoundView.vue";
 import TargetListView from "@/views/TargetListView.vue"; // JobView
-import AddJobView from "@/views/AddJobView.vue";
+import InteractionHistory from "@/views/InteractionHistory.vue";
 import EditJobView from "@/views/EditJobView.vue";
 import TestComponent from "@/components/TestComponent.vue";
 
@@ -29,7 +29,7 @@ const router = createRouter({
     {
       path: "/jobs/add",
       name: "add-job",
-      component: AddJobView,
+      component: InteractionHistory,
     },
     {
       path: "/test",
