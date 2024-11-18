@@ -156,6 +156,7 @@ const closeModal = () => {
                     <a
                       :href="`mailto:${contact.contact_email}`"
                       class="text-blue-600 underline"
+                      @click.stop
                     >
                       {{ contact.contact_email || "N/A" }}
                     </a>
@@ -164,6 +165,7 @@ const closeModal = () => {
                     <a
                       :href="`tel:${contact.contact_phone}`"
                       class="text-blue-600 underline"
+                      @click.stop
                     >
                       {{ contact.contact_phone || "N/A" }}
                     </a>
@@ -172,6 +174,7 @@ const closeModal = () => {
                     <a
                       :href="`tel:${contact.mobile_phone}`"
                       class="text-blue-600 underline"
+                      @click.stop
                     >
                       {{ contact.mobile_phone || "N/A" }}
                     </a>
@@ -186,19 +189,20 @@ const closeModal = () => {
                   {{ contact.notes || "No notes available." }}
                 </p>
                 <!-- Log Call Outcome Button -->
-                <button
+                <p
                   @click.stop="contact.showForm = !contact.showForm"
-                  class="mt-3 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded shadow-sm"
+                  class="mt-3 text-blue-600 cursor-pointer hover:underline text-center font-semibold"
                 >
                   {{
                     contact.showForm
                       ? "Hide Call Outcome Form"
                       : "Log Call Outcome"
                   }}
-                </button>
+                </p>
+
                 <!-- Log Call Outcome Form -->
                 <div v-if="contact.showForm" class="mt-4 border-t pt-4">
-                  <form @submit.prevent="logInteraction(contact)">
+                  <form @click.stop @submit.prevent="logInteraction(contact)">
                     <!-- Call Outcome -->
                     <div class="mb-4">
                       <label for="outcome" class="block font-semibold"
