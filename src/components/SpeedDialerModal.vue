@@ -49,7 +49,7 @@ const closeModal = () => {
 <template>
   <div
     v-if="isVisible"
-    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center modal"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center pt-8 modal"
     @click.self="closeModal"
   >
     <!-- Modal Size -->
@@ -118,7 +118,6 @@ const closeModal = () => {
           </p>
         </div>
       </div>
-
       <!-- Contacts List -->
       <div class="flex-1 overflow-y-auto">
         <h4 class="text-xl font-bold mb-4">Contacts</h4>
