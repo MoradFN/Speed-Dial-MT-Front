@@ -171,19 +171,82 @@ const closeModal = () => {
                   </p>
                 </div>
               </div>
-              <!-- Expandable Notes Section -->
+              <!-- Expanded Notes and Log Call Outcome Section -->
               <div v-if="contact.showDetails" class="mt-3">
+                <!-- Notes -->
                 <p>
                   <span class="font-semibold">Notes:</span>
                   {{ contact.notes || "No notes available." }}
                 </p>
                 <!-- Log Call Outcome Button -->
                 <button
-                  @click.stop="logCallOutcome(contact)"
-                  class="mt-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded shadow-sm"
+                  @click.stop="contact.showForm = !contact.showForm"
+                  class="mt-3 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded shadow-sm"
                 >
-                  Log Call Outcome
+                  {{
+                    contact.showForm
+                      ? "Hide Call Outcome Form"
+                      : "Log Call Outcome"
+                  }}
                 </button>
+                <!-- Log Call Outcome Form -->
+                <div v-if="contact.showForm" class="mt-4 border-t pt-4">
+                  <form @submit.prevent="logInteraction(contact)">
+                    <!-- Call Outcome -->
+                    <div class="mb-4">
+                      <label for="outcome" class="block font-semibold"
+                        >Call Outcome:</label
+                      >
+                      <select
+                        id="outcome"
+                        v-model="contact.callOutcome"
+                        class="w-full border rounded px-4 py-2"
+                        required
+                      >
+                        <option value="" disabled>Select an outcome</option>
+                        <option>Interested</option>
+                        <option>Busy</option>
+                        <option>Not Interested</option>
+                        <option>No Answer</option>
+                      </select>
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="mb-4">
+                      <label for="notes" class="block font-semibold"
+                        >Notes:</label
+                      >
+                      <textarea
+                        id="notes"
+                        v-model="contact.notesInput"
+                        rows="3"
+                        class="w-full border rounded px-4 py-2"
+                        placeholder="Add any notes here..."
+                      ></textarea>
+                    </div>
+
+                    <!-- Next Contact Date -->
+                    <div class="mb-4">
+                      <label for="next-contact" class="block font-semibold"
+                        >Next Contact Date:</label
+                      >
+                      <input
+                        id="next-contact"
+                        type="date"
+                        v-model="contact.nextContactDate"
+                        class="w-full border rounded px-4 py-2"
+                      />
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button
+                      type="submit"
+                      class="mt-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded shadow-sm"
+                    >
+                      Log Interaction
+                    </button>
+                  </form>
+                </div>
               </div>
             </li>
           </ul>
