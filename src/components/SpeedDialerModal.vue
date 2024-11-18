@@ -53,7 +53,7 @@ const logInteraction = async (contact) => {
     const payload = {
       contact_id: contact.contact_id,
       user_id: 1, // Replace with the actual user ID if available
-      target_list_id: props.targetListId, // Use the dynamically passed target list ID
+      target_list_id: props.targetListId, // Use the dynamically passed target list ID // e detta slug?
       next_contact_date: contact.nextContactDate,
       notes: contact.notesInput,
       outcome: contact.callOutcome,
