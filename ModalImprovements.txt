@@ -1,3 +1,5 @@
+/////////////////////////////////////////////////////////////////MODAL
+
 Recommendations for Improvements:
 Initialization of showDetails:
 
@@ -66,3 +68,10 @@ watch(
 Fallbacks for Missing Data:
 
 Use fallback text like "Not Available" for missing fields to avoid empty sections.
+
+
+------
+
+Fixa så att bakgrunden inte scrollar med modalen.
+
+/////////////////////////////////////////////////////////////////MODAL

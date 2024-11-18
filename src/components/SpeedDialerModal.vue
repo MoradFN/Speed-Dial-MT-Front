@@ -1,5 +1,6 @@
 <script setup>
 import { reactive, computed, defineProps, defineEmits } from "vue";
+import axios from "axios";
 
 const props = defineProps({
   accounts: {
@@ -8,6 +9,10 @@ const props = defineProps({
   },
   isVisible: {
     type: Boolean,
+    required: true,
+  },
+  targetListId: {
+    type: [Number, String],
     required: true,
   },
 });
@@ -35,8 +40,51 @@ const previousAccount = () => {
     props.accounts.length;
 };
 
-const logCallOutcome = (contact) => {
-  console.log(`Logging call outcome for contact ID: ${contact.contact_id}`);
+// Log interaction
+const logInteraction = async (contact) => {
+  try {
+    // Validate required fields
+    if (!contact.callOutcome) {
+      alert("Please select a call outcome.");
+      return;
+    }
+
+    // Prepare the payload
+    const payload = {
+      contact_id: contact.contact_id,
+      user_id: 1, // Replace with the actual user ID if available
+      target_list_id: props.targetListId, // Use the dynamically passed target list ID
+      next_contact_date: contact.nextContactDate,
+      notes: contact.notesInput,
+      outcome: contact.callOutcome,
+      contact_method: "call", // Adjust as needed
+    };
+
+    // Make the API call
+    const response = await axios.post(
+      "/api/index.php?route=log-contact-interaction",
+      payload
+    );
+
+    // Handle success response
+    console.log("Interaction logged successfully:", response.data);
+    alert("Interaction logged successfully!");
+
+    // Reset input fields
+    contact.callOutcome = "";
+    contact.notesInput = "";
+    contact.nextContactDate = null;
+  } catch (error) {
+    // Handle errors and display feedback
+    console.error(
+      "Failed to log interaction:",
+      error.response?.data || error.message
+    );
+    alert(
+      "Failed to log interaction: " +
+        (error.response?.data?.message || error.message)
+    );
+  }
 };
 
 // Close the modal and reset the index
@@ -55,7 +103,7 @@ const closeModal = () => {
     <!-- Modal Size -->
     <!-- Put max height and scrolling. -->
     <div
-      class="bg-white p-8 rounded-lg shadow-lg w-3/4 max-w-6xl min-h-[600px] modal-content flex flex-col"
+      class="bg-white p-8 rounded-lg shadow-lg w-3/4 max-w-6xl min-h-[600px] max-h-[90vh] modal-content overflow-y-auto flex flex-col"
     >
       <!-- Account Details -->
       <div class="flex-1">
@@ -149,6 +197,7 @@ const closeModal = () => {
                     <a
                       :href="`mailto:${contact.contact_email}`"
                       class="text-blue-600 underline"
+                      @click.stop
                     >
                       {{ contact.contact_email || "N/A" }}
                     </a>
@@ -157,6 +206,7 @@ const closeModal = () => {
                     <a
                       :href="`tel:${contact.contact_phone}`"
                       class="text-blue-600 underline"
+                      @click.stop
                     >
                       {{ contact.contact_phone || "N/A" }}
                     </a>
@@ -165,25 +215,91 @@ const closeModal = () => {
                     <a
                       :href="`tel:${contact.mobile_phone}`"
                       class="text-blue-600 underline"
+                      @click.stop
                     >
                       {{ contact.mobile_phone || "N/A" }}
                     </a>
                   </p>
                 </div>
               </div>
-              <!-- Expandable Notes Section -->
+              <!-- Expanded Notes and Log Call Outcome Section -->
               <div v-if="contact.showDetails" class="mt-3">
+                <!-- Notes -->
                 <p>
                   <span class="font-semibold">Notes:</span>
                   {{ contact.notes || "No notes available." }}
                 </p>
                 <!-- Log Call Outcome Button -->
-                <button
-                  @click.stop="logCallOutcome(contact)"
-                  class="mt-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded shadow-sm"
+                <p
+                  @click.stop="contact.showForm = !contact.showForm"
+                  class="mt-3 text-blue-600 cursor-pointer hover:underline text-center font-semibold"
                 >
-                  Log Call Outcome
-                </button>
+                  {{
+                    contact.showForm
+                      ? "Hide Call Outcome Form"
+                      : "Log Call Outcome"
+                  }}
+                </p>
+
+                <!-- Log Call Outcome Form -->
+                <div v-if="contact.showForm" class="mt-4 border-t pt-4">
+                  <form @click.stop @submit.prevent="logInteraction(contact)">
+                    <!-- Call Outcome -->
+                    <div class="mb-4">
+                      <label for="outcome" class="block font-semibold"
+                        >Call Outcome:</label
+                      >
+                      <select
+                        id="outcome"
+                        v-model="contact.callOutcome"
+                        class="w-full border rounded px-4 py-2"
+                        required
+                      >
+                        <option value="" disabled>Select an outcome</option>
+                        <option>Interested</option>
+                        <option>Busy</option>
+                        <option>Not Interested</option>
+                        <option>No Answer</option>
+                        <option>Other - Check Notes</option>
+                      </select>
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="mb-4">
+                      <label for="notes" class="block font-semibold"
+                        >Notes:</label
+                      >
+                      <textarea
+                        id="notes"
+                        v-model="contact.notesInput"
+                        rows="3"
+                        class="w-full border rounded px-4 py-2"
+                        placeholder="Add any notes here..."
+                      ></textarea>
+                    </div>
+
+                    <!-- Next Contact Date -->
+                    <div class="mb-4">
+                      <label for="next-contact" class="block font-semibold"
+                        >Next Contact Date:</label
+                      >
+                      <input
+                        id="next-contact"
+                        type="date"
+                        v-model="contact.nextContactDate"
+                        class="w-full border rounded px-4 py-2"
+                      />
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button
+                      type="submit"
+                      class="mt-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded shadow-sm"
+                    >
+                      Log Interaction
+                    </button>
+                  </form>
+                </div>
               </div>
             </li>
           </ul>
@@ -222,6 +338,10 @@ const closeModal = () => {
 .modal {
   animation: fadeIn 0.3s ease-in-out;
 }
+/* .modal-content {
+  max-height: 90vh;
+  overflow-y: auto;
+} */
 
 @keyframes fadeIn {
   from {
@@ -231,9 +351,4 @@ const closeModal = () => {
     opacity: 1;
   }
 }
-
-/* .modal-content {
-  max-height: 80vh;
-  overflow-y: auto;
-} */
 </style>
