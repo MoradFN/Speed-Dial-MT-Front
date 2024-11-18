@@ -1,5 +1,6 @@
 <script setup>
 import { reactive, computed, defineProps, defineEmits } from "vue";
+import axios from "axios";
 
 const props = defineProps({
   accounts: {
@@ -36,14 +37,50 @@ const previousAccount = () => {
 };
 
 // Log interaction
-const logInteraction = (contact) => {
-  console.log("Call Outcome:", contact.callOutcome);
-  console.log("Notes:", contact.notesInput);
-  console.log("Next Contact Date:", contact.nextContactDate);
-  // Reset inputs
-  contact.callOutcome = "";
-  contact.notesInput = "";
-  contact.nextContactDate = null;
+const logInteraction = async (contact) => {
+  try {
+    // Validate required fields
+    if (!contact.callOutcome) {
+      alert("Please select a call outcome.");
+      return;
+    }
+
+    // Prepare the payload using contact and currentAccount
+    const payload = {
+      contact_id: contact.contact_id,
+      user_id: 1, // Replace with actual user ID if available
+      target_list_id: currentAccount.value.target_list_id || 1, // Use actual target list ID
+      next_contact_date: contact.nextContactDate,
+      notes: contact.notesInput,
+      outcome: contact.callOutcome,
+      contact_method: "call", // Adjust as needed
+    };
+
+    // Make the API call
+    const response = await axios.post(
+      "/api/index.php?route=log-contact-interaction",
+      payload
+    );
+
+    // Handle success response
+    console.log("Interaction logged successfully:", response.data);
+    alert("Interaction logged successfully!");
+
+    // Reset input fields
+    contact.callOutcome = "";
+    contact.notesInput = "";
+    contact.nextContactDate = null;
+  } catch (error) {
+    // Handle errors and display feedback
+    console.error(
+      "Failed to log interaction:",
+      error.response?.data || error.message
+    );
+    alert(
+      "Failed to log interaction: " +
+        (error.response?.data?.message || error.message)
+    );
+  }
 };
 
 // Close the modal and reset the index
@@ -219,6 +256,7 @@ const closeModal = () => {
                         <option>Busy</option>
                         <option>Not Interested</option>
                         <option>No Answer</option>
+                        <option>Other - Check Notes</option>
                       </select>
                     </div>
 
