@@ -1,0 +1,68 @@
+Recommendations for Improvements:
+Initialization of showDetails:
+
+If showDetails is not initialized in your data source, you should initialize it during data processing.
+
+props.accounts.forEach((account) => {
+  account.contacts.forEach((contact) => {
+    contact.showDetails = false; // Ensure showDetails is initialized
+  });
+});
+-------------------------------------------------------------------------------------------
+
+Empty States:
+
+Ensure the component gracefully handles scenarios where accounts is empty or currentAccount has no contacts.
+
+<p v-if="!props.accounts.length" class="text-center text-gray-500">
+  No accounts available.
+</p>
+-----------------------------------------------------------------------------------------------
+Responsiveness:
+
+Consider making the modal fully responsive for smaller devices. You can use Tailwind's responsive classes to adjust the width (w-1/3, max-w-4xl) for smaller screens.
+
+----------------------------------------
+Accessibility:
+
+Add aria-label attributes to interactive elements for better accessibility.
+<button
+  aria-label="Close Modal"
+  @click="closeModal"
+  class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600"
+>
+  Close
+</button>
+-----------------------------------------------------------------------------
+Optimized Inline Logic:
+
+Avoid inline logic in the template for href links by using computed properties.
+
+const accountWebsiteLink = computed(() => {
+  const website = currentAccount.website || "";
+  return website.startsWith("http") ? website : `http://${website}`;
+});
+
+Then, use it in the template:
+
+<a :href="accountWebsiteLink" target="_blank" class="text-blue-600 underline">
+  {{ currentAccount.website }}
+</a>
+
+----------------------------------------------------
+Modal Behavior on Account List Change:
+
+If the accounts prop changes dynamically (e.g., filtering), consider resetting the currentAccountIndex to ensure consistent behavior:
+watch(
+  () => props.accounts,
+  (newAccounts) => {
+    if (newAccounts.length === 0) {
+      state.currentAccountIndex = 0;
+    }
+  }
+);
+---------------------------------------
+
+Fallbacks for Missing Data:
+
+Use fallback text like "Not Available" for missing fields to avoid empty sections.

@@ -35,6 +35,10 @@ const previousAccount = () => {
     props.accounts.length;
 };
 
+const logCallOutcome = (contact) => {
+  console.log(`Logging call outcome for contact ID: ${contact.contact_id}`);
+};
+
 // Close the modal and reset the index
 const closeModal = () => {
   emits("close");
@@ -48,8 +52,9 @@ const closeModal = () => {
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center modal"
     @click.self="closeModal"
   >
+    <!-- Modal Size -->
     <div
-      class="bg-white p-8 rounded-lg shadow-lg w-2/3 max-w-4xl modal-content"
+      class="bg-white p-8 rounded-lg shadow-lg w-3/4 max-w-6xl modal-content"
     >
       <!-- Account Details -->
       <div class="p-6 border-b border-gray-200 mb-6">
@@ -114,33 +119,79 @@ const closeModal = () => {
       </div>
 
       <!-- Contacts List -->
-      <div class="p-6 border-b border-gray-200">
+      <div class="mt-6">
         <h4 class="text-xl font-bold mb-4">Contacts</h4>
         <div v-if="currentAccount.contacts && currentAccount.contacts.length">
           <ul>
             <li
               v-for="contact in currentAccount.contacts"
               :key="contact.contact_id"
-              class="mb-4 pb-2 border-b"
+              class="mb-4 p-4 border rounded-md shadow-sm bg-blue-50"
             >
-              <p>
-                <strong
-                  >{{ contact.first_name }} {{ contact.last_name }}</strong
+              <div class="flex justify-between items-center">
+                <!-- Contact Name and Status -->
+                <div>
+                  <p class="text-lg font-semibold text-blue-700">
+                    {{ contact.first_name }} {{ contact.last_name }} -
+                    {{ contact.job_title || "N/A" }}
+                    <span class="text-gray-500 text-sm">
+                      (ID: {{ contact.contact_id }}) ({{
+                        contact.contact_status || "Unknown"
+                      }})
+                    </span>
+                  </p>
+                </div>
+                <!-- Contact Details -->
+                <div class="text-right">
+                  <p>
+                    <span class="font-semibold">Email:</span>
+                    <a
+                      :href="`mailto:${contact.contact_email}`"
+                      class="text-blue-600 underline"
+                    >
+                      {{ contact.contact_email || "N/A" }}
+                    </a>
+                    |
+                    <span class="font-semibold">Phone:</span>
+                    <a
+                      :href="`tel:${contact.contact_phone}`"
+                      class="text-blue-600 underline"
+                    >
+                      {{ contact.contact_phone || "N/A" }}
+                    </a>
+                    |
+                    <span class="font-semibold">Mobile:</span>
+                    <a
+                      :href="`tel:${contact.mobile_phone}`"
+                      class="text-blue-600 underline"
+                    >
+                      {{ contact.mobile_phone || "N/A" }}
+                    </a>
+                  </p>
+                </div>
+              </div>
+              <!-- Expandable Notes Section -->
+              <div class="mt-3">
+                <button
+                  @click="contact.showDetails = !contact.showDetails"
+                  class="text-blue-500 hover:text-blue-700 font-semibold"
                 >
-                - {{ contact.job_title || "N/A" }}
-              </p>
-              <p v-if="contact.contact_email">
-                <strong>Email:</strong> {{ contact.contact_email }}
-              </p>
-              <p v-if="contact.contact_phone">
-                <strong>Phone:</strong> {{ contact.contact_phone }}
-              </p>
-              <p v-if="contact.mobile_phone">
-                <strong>Mobile:</strong> {{ contact.mobile_phone }}
-              </p>
-              <p v-if="contact.notes">
-                <strong>Notes:</strong> {{ contact.notes }}
-              </p>
+                  {{ contact.showDetails ? "Hide Details" : "View Details" }}
+                </button>
+                <div v-if="contact.showDetails" class="mt-3">
+                  <p>
+                    <span class="font-semibold">Notes:</span>
+                    {{ contact.notes || "No notes available." }}
+                  </p>
+                  <!-- Log Call Outcome Button -->
+                  <button
+                    @click="logCallOutcome(contact)"
+                    class="mt-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded shadow-sm"
+                  >
+                    Log Call Outcome
+                  </button>
+                </div>
+              </div>
             </li>
           </ul>
         </div>
