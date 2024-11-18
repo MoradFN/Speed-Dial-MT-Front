@@ -8,7 +8,7 @@ const state = reactive({
   totalPages: 1,
   totalRecords: 0,
   page: 1,
-  limit: 10,
+  limit: 5,
   orderBy: "contact_contacted_at",
   direction: "DESC",
   filters: {
