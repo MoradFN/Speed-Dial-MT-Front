@@ -54,7 +54,7 @@ const closeModal = () => {
   >
     <!-- Modal Size -->
     <div
-      class="bg-white p-8 rounded-lg shadow-lg w-3/4 max-w-6xl modal-content"
+      class="bg-white p-8 rounded-lg shadow-lg w-3/4 max-w-6xl min-h-[600px] modal-content"
     >
       <!-- Account Details -->
       <div class="p-6 border-b border-gray-200 mb-6">
