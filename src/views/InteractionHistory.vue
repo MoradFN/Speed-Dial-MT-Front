@@ -173,24 +173,184 @@ const goToPage = (page) => {
       <table class="table-auto w-full bg-white border rounded-lg shadow-md">
         <thead>
           <tr>
-            <th @click="sortBy('user_name')">User Name</th>
-            <th @click="sortBy('campaign_name')">Campaign Name</th>
-            <th>Campaign Description</th>
-            <th @click="sortBy('campaign_start_date')">Campaign Start Date</th>
-            <th @click="sortBy('campaign_end_date')">Campaign End Date</th>
-            <th @click="sortBy('campaign_status')">Campaign Status</th>
-            <th @click="sortBy('target_list_name')">Target List Name</th>
-            <th>Target List Description</th>
-            <th @click="sortBy('account_name')">Account Name</th>
-            <th @click="sortBy('contact_name')">Contact Name</th>
-            <th @click="sortBy('contact_interaction_outcome')">
-              Contact Outcome
+            <th
+              @click="sortBy('user_name')"
+              :class="{ 'bg-gray-200': state.orderBy === 'user_name' }"
+              style="cursor: pointer"
+              :aria-label="`Sort by ${
+                state.orderBy === 'user_name' ? 'descending' : 'ascending'
+              } order`"
+            >
+              User Name
+              <span v-if="state.orderBy === 'user_name'">
+                {{ state.direction === "ASC" ? "▲" : "▼" }}
+              </span>
             </th>
-            <th @click="sortBy('contact_phone')">Contact Phone</th>
+            <th
+              @click="sortBy('campaign_name')"
+              :class="{ 'bg-gray-200': state.orderBy === 'campaign_name' }"
+              style="cursor: pointer"
+              :aria-label="`Sort by ${
+                state.orderBy === 'campaign_name' ? 'descending' : 'ascending'
+              } order`"
+            >
+              Campaign Name
+              <span v-if="state.orderBy === 'campaign_name'">
+                {{ state.direction === "ASC" ? "▲" : "▼" }}
+              </span>
+            </th>
+            <th>Campaign Description</th>
+            <th
+              @click="sortBy('campaign_start_date')"
+              :class="{
+                'bg-gray-200': state.orderBy === 'campaign_start_date',
+              }"
+              style="cursor: pointer"
+              :aria-label="`Sort by ${
+                state.orderBy === 'campaign_start_date'
+                  ? 'descending'
+                  : 'ascending'
+              } order`"
+            >
+              Campaign Start Date
+              <span v-if="state.orderBy === 'campaign_start_date'">
+                {{ state.direction === "ASC" ? "▲" : "▼" }}
+              </span>
+            </th>
+            <th
+              @click="sortBy('campaign_end_date')"
+              :class="{ 'bg-gray-200': state.orderBy === 'campaign_end_date' }"
+              style="cursor: pointer"
+              :aria-label="`Sort by ${
+                state.orderBy === 'campaign_end_date'
+                  ? 'descending'
+                  : 'ascending'
+              } order`"
+            >
+              Campaign End Date
+              <span v-if="state.orderBy === 'campaign_end_date'">
+                {{ state.direction === "ASC" ? "▲" : "▼" }}
+              </span>
+            </th>
+            <th
+              @click="sortBy('campaign_status')"
+              :class="{ 'bg-gray-200': state.orderBy === 'campaign_status' }"
+              style="cursor: pointer"
+              :aria-label="`Sort by ${
+                state.orderBy === 'campaign_status' ? 'descending' : 'ascending'
+              } order`"
+            >
+              Campaign Status
+              <span v-if="state.orderBy === 'campaign_status'">
+                {{ state.direction === "ASC" ? "▲" : "▼" }}
+              </span>
+            </th>
+            <th
+              @click="sortBy('target_list_name')"
+              :class="{ 'bg-gray-200': state.orderBy === 'target_list_name' }"
+              style="cursor: pointer"
+              :aria-label="`Sort by ${
+                state.orderBy === 'target_list_name'
+                  ? 'descending'
+                  : 'ascending'
+              } order`"
+            >
+              Target List Name
+              <span v-if="state.orderBy === 'target_list_name'">
+                {{ state.direction === "ASC" ? "▲" : "▼" }}
+              </span>
+            </th>
+            <th>Target List Description</th>
+            <th
+              @click="sortBy('account_name')"
+              :class="{ 'bg-gray-200': state.orderBy === 'account_name' }"
+              style="cursor: pointer"
+              :aria-label="`Sort by ${
+                state.orderBy === 'account_name' ? 'descending' : 'ascending'
+              } order`"
+            >
+              Account Name
+              <span v-if="state.orderBy === 'account_name'">
+                {{ state.direction === "ASC" ? "▲" : "▼" }}
+              </span>
+            </th>
+            <th
+              @click="sortBy('contact_name')"
+              :class="{ 'bg-gray-200': state.orderBy === 'contact_name' }"
+              style="cursor: pointer"
+              :aria-label="`Sort by ${
+                state.orderBy === 'contact_name' ? 'descending' : 'ascending'
+              } order`"
+            >
+              Contact Name
+              <span v-if="state.orderBy === 'contact_name'">
+                {{ state.direction === "ASC" ? "▲" : "▼" }}
+              </span>
+            </th>
+            <th
+              @click="sortBy('contact_interaction_outcome')"
+              :class="{
+                'bg-gray-200': state.orderBy === 'contact_interaction_outcome',
+              }"
+              style="cursor: pointer"
+              :aria-label="`Sort by ${
+                state.orderBy === 'contact_interaction_outcome'
+                  ? 'descending'
+                  : 'ascending'
+              } order`"
+            >
+              Contact Outcome
+              <span v-if="state.orderBy === 'contact_interaction_outcome'">
+                {{ state.direction === "ASC" ? "▲" : "▼" }}
+              </span>
+            </th>
+            <th
+              @click="sortBy('contact_phone')"
+              :class="{ 'bg-gray-200': state.orderBy === 'contact_phone' }"
+              style="cursor: pointer"
+              :aria-label="`Sort by ${
+                state.orderBy === 'contact_phone' ? 'descending' : 'ascending'
+              } order`"
+            >
+              Contact Phone
+              <span v-if="state.orderBy === 'contact_phone'">
+                {{ state.direction === "ASC" ? "▲" : "▼" }}
+              </span>
+            </th>
             <th>Contact Notes</th>
-            <th @click="sortBy('contact_contacted_at')">Contacted At</th>
-            <th @click="sortBy('contact_next_contact_date')">
+            <th
+              @click="sortBy('contact_contacted_at')"
+              :class="{
+                'bg-gray-200': state.orderBy === 'contact_contacted_at',
+              }"
+              style="cursor: pointer"
+              :aria-label="`Sort by ${
+                state.orderBy === 'contact_contacted_at'
+                  ? 'descending'
+                  : 'ascending'
+              } order`"
+            >
+              Contacted At
+              <span v-if="state.orderBy === 'contact_contacted_at'">
+                {{ state.direction === "ASC" ? "▲" : "▼" }}
+              </span>
+            </th>
+            <th
+              @click="sortBy('contact_next_contact_date')"
+              :class="{
+                'bg-gray-200': state.orderBy === 'contact_next_contact_date',
+              }"
+              style="cursor: pointer"
+              :aria-label="`Sort by ${
+                state.orderBy === 'contact_next_contact_date'
+                  ? 'descending'
+                  : 'ascending'
+              } order`"
+            >
               Next Contact Date
+              <span v-if="state.orderBy === 'contact_next_contact_date'">
+                {{ state.direction === "ASC" ? "▲" : "▼" }}
+              </span>
             </th>
             <th>Interaction Duration</th>
           </tr>

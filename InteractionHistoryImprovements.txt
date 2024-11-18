@@ -15,6 +15,7 @@ State Management:
 
 Use reactive or ref for managing interaction data, filters, and pagination.
 
+Toast
 
 ---------------------------------------------------------------------------------------------------------------------------------------
 

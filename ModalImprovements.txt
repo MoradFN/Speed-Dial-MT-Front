@@ -73,5 +73,6 @@ Use fallback text like "Not Available" for missing fields to avoid empty section
 ------
 
 Fixa så att bakgrunden inte scrollar med modalen.
+Fixa Toast
 
 /////////////////////////////////////////////////////////////////MODAL
