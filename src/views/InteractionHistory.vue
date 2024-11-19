@@ -123,11 +123,11 @@ onMounted(fetchInteractions);
     <!-- Interaction Rows -->
     <div v-else>
       <!-- Header row -->
-      <div class="grid grid-cols-12 font-bold bg-gray-200 p-4 rounded-t-lg">
+      <div class="grid grid-cols-8 font-bold bg-gray-200 p-4 rounded-t-lg">
         <div
           v-for="column in visibleColumns"
           :key="column.key"
-          class="col-span-2"
+          class="col-span-1"
         >
           {{ column.label }}
         </div>
@@ -136,11 +136,11 @@ onMounted(fetchInteractions);
       <!-- Data rows -->
       <div v-for="interaction in state.interactions" :key="interaction.id">
         <!-- Main Row -->
-        <div class="grid grid-cols-12 p-4 border-b">
+        <div class="grid grid-cols-8 p-4 border-b">
           <div
             v-for="column in visibleColumns"
             :key="column.key"
-            class="col-span-2"
+            class="col-span-1"
           >
             {{ interaction[column.key] || "N/A" }}
           </div>
