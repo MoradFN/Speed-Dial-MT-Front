@@ -11,8 +11,8 @@ const state = reactive({
     showCampaignStartDate: false,
     showCampaignEndDate: false,
     showCampaignStatus: false,
-    showContactPhone: false,
-    showContactInteractionDuration: false,
+    // showContactPhone: false,
+    // showContactInteractionDuration: false,
   },
 });
 
@@ -55,20 +55,20 @@ const columns = [
   { key: "target_list_name", label: "Target List Name" },
   { key: "account_name", label: "Account Name" },
   { key: "contact_name", label: "Contact Name" },
-  { key: "outcome", label: "Outcome" },
+  { key: "contact_interaction_outcome", label: "Outcome" },
   { key: "contacted_at", label: "Contacted At" },
   { key: "next_contact_date", label: "Next Contact Date" },
-  {
-    key: "contact_phone",
-    label: "Contact Phone",
-    visibility: () => state.extraColumnVisibility.showContactPhone,
-  },
-  {
-    key: "contact_interaction_duration",
-    label: "Contact Interaction Duration",
-    visibility: () =>
-      state.extraColumnVisibility.showContactInteractionDuration,
-  },
+  // {
+  //   key: "contact_phone",
+  //   label: "Contact Phone",
+  //   visibility: () => state.extraColumnVisibility.showContactPhone,
+  // },
+  // {
+  //   key: "contact_interaction_duration",
+  //   label: "Contact Interaction Duration",
+  //   visibility: () =>
+  //     state.extraColumnVisibility.showContactInteractionDuration,
+  // },
 ];
 
 // Computed property for visible columns
@@ -166,12 +166,24 @@ onMounted(fetchInteractions);
             }"
           >
             <p>
+              <strong>Contact Phone:</strong>
+              {{ interaction.contact_phone || "N/A" }}
+            </p>
+            <p>
+              <strong>Interaction Duration:</strong>
+              {{ interaction.contact_interaction_duration || "N/A" }}
+            </p>
+            <p>
               <strong>Interaction Notes:</strong>
               {{ interaction.contact_notes || "N/A" }}
             </p>
             <p>
               <strong>Campaign Description:</strong>
               {{ interaction.campaign_description || "N/A" }}
+            </p>
+            <p>
+              <strong>Target List Description:</strong>
+              {{ interaction.target_list_description || "N/A" }}
             </p>
           </div>
         </div>
