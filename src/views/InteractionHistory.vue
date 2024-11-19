@@ -95,6 +95,7 @@ onMounted(fetchInteractions);
           v-model="state.extraColumnVisibility[key]"
           class="mr-2"
         />
+        <!-- använder key och tar bort show och lägger till space -->
         {{
           key
             .replace("show", "")
