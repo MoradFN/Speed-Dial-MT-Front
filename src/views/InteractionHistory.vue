@@ -2,59 +2,66 @@
 import { reactive, onMounted } from "vue";
 import axios from "axios";
 
+// Reactive state for interaction history
 const state = reactive({
-  targetLists: [], // Store target list data
+  interactions: [], // Fetched interaction history
   isLoading: true, // Loading state
   error: null, // Error state
 });
 
-// Fetch target lists from API
-const fetchTargetLists = async () => {
+// Fetch interaction history from API
+const fetchInteractions = async () => {
   state.isLoading = true;
   try {
-    const response = await axios.get("/api/index.php?route=target-lists");
-    state.targetLists = response.data.targetLists || []; // Adjust key based on API response
+    const response = await axios.get(
+      "/api/index.php?route=interaction-history"
+    );
+    state.interactions = response.data.interactionHistory || []; // Populate interactions or fallback to empty array
   } catch (error) {
-    state.error = "Failed to fetch target lists.";
+    state.error = "Failed to fetch interaction history."; // Handle API error
     console.error(error);
   } finally {
-    state.isLoading = false;
+    state.isLoading = false; // End loading state
   }
 };
 
-// Fetch data when component mounts
-onMounted(fetchTargetLists);
+// Fetch data on component mount
+onMounted(fetchInteractions);
 </script>
 
 <template>
   <div class="container mx-auto py-6">
-    <h1 class="text-2xl font-bold mb-4">Target Lists</h1>
+    <h1 class="text-2xl font-bold mb-4">Interaction History</h1>
 
-    <!-- Display loading state -->
+    <!-- Loading state -->
     <div v-if="state.isLoading" class="text-center py-4">Loading...</div>
 
-    <!-- Display error message -->
+    <!-- Error state -->
     <div v-else-if="state.error" class="text-red-500 py-4">
       {{ state.error }}
     </div>
 
-    <!-- Display target list table -->
+    <!-- Interaction table -->
     <div v-else>
       <table class="table-auto w-full bg-white border rounded-lg shadow-md">
         <thead>
           <tr>
-            <th class="px-4 py-2">ID</th>
-            <th class="px-4 py-2">Name</th>
-            <th class="px-4 py-2">Description</th>
-            <th class="px-4 py-2">Status</th>
+            <th class="px-4 py-2">User Name</th>
+            <th class="px-4 py-2">Campaign Name</th>
+            <th class="px-4 py-2">Contact Name</th>
+            <th class="px-4 py-2">Contacted At</th>
+            <th class="px-4 py-2">Outcome</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="list in state.targetLists" :key="list.id">
-            <td class="px-4 py-2">{{ list.id }}</td>
-            <td class="px-4 py-2">{{ list.name }}</td>
-            <td class="px-4 py-2">{{ list.description }}</td>
-            <td class="px-4 py-2">{{ list.status }}</td>
+          <tr v-for="interaction in state.interactions" :key="interaction.id">
+            <td class="px-4 py-2">{{ interaction.user_name }}</td>
+            <td class="px-4 py-2">{{ interaction.campaign_name }}</td>
+            <td class="px-4 py-2">{{ interaction.contact_name }}</td>
+            <td class="px-4 py-2">{{ interaction.contact_contacted_at }}</td>
+            <td class="px-4 py-2">
+              {{ interaction.contact_interaction_outcome }}
+            </td>
           </tr>
         </tbody>
       </table>
