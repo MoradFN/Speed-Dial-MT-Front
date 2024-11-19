@@ -81,7 +81,7 @@ onMounted(fetchInteractions);
 </script>
 
 <template>
-  <div class="container mx-auto py-6">
+  <div class="w-[90vw] mx-auto py-6">
     <h1 class="text-2xl font-bold mb-4">Interaction History</h1>
 
     <!-- Toggle visibility checkboxes -->
