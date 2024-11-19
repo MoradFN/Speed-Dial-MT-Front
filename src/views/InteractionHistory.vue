@@ -57,7 +57,7 @@ const columns = [
   { key: "contact_name", label: "Contact Name" },
   { key: "contact_interaction_outcome", label: "Outcome" },
   { key: "contacted_at", label: "Contacted At" },
-  { key: "next_contact_date", label: "Next Contact Date" },
+  { key: "contact_next_contact_date", label: "Next Contact Date" },
   // {
   //   key: "contact_phone",
   //   label: "Contact Phone",
