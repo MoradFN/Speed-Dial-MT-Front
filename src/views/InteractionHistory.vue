@@ -15,17 +15,93 @@ const state = reactive({
     // showContactInteractionDuration: false,
   },
   expandedRows: new Set(),
+  filters: {
+    campaign_name: "",
+    campaign_status: "",
+    target_list_name: "",
+    account_name: "",
+    contact_name: "",
+    contact_phone: "",
+    contact_interaction_outcome: "",
+    date_field: "contact_contacted_at",
+    date_from: null,
+    date_to: null,
+  },
+  orderBy: "contact_contacted_at",
+  direction: "DESC",
+  pagination: {
+    page: 1,
+    limit: 10,
+  },
 });
+
+////////////////////////// SORTING AND FILTERING
+const buildQueryParams = () => {
+  return {
+    ...state.filters,
+    page: state.pagination.page,
+    limit: state.pagination.limit,
+    orderBy: state.orderBy,
+    direction: state.direction,
+  };
+};
+
+const sortBy = (column) => {
+  if (state.orderBy === column) {
+    state.direction = state.direction === "ASC" ? "DESC" : "ASC";
+  } else {
+    state.orderBy = column;
+    state.direction = "ASC";
+  }
+  fetchInteractions(); // Fetch updated data
+};
+
+const clearFilters = () => {
+  state.filters = {
+    campaign_name: "",
+    campaign_status: "",
+    target_list_name: "",
+    account_name: "",
+    contact_name: "",
+    contact_phone: "",
+    contact_interaction_outcome: "",
+    date_field: "contact_contacted_at",
+    date_from: null,
+    date_to: null,
+  };
+  // state.pagination.page = 1; // Reset to the first page
+  fetchInteractions(); // Fetch updated results
+};
+
+const goToPage = (page) => {
+  if (page > 0 && page <= state.pagination.totalPages) {
+    state.pagination.page = page;
+    fetchInteractions();
+  }
+};
+
+////////////////////////////////////////////////
 
 // Fetch interaction history
 const fetchInteractions = async () => {
   state.isLoading = true;
   state.error = null;
+
   try {
     const response = await axios.get(
-      "/api/index.php?route=interaction-history"
+      "/api/index.php?route=interaction-history",
+      {
+        params: buildQueryParams(),
+      }
     );
-    state.interactions = response.data.interactionHistory || [];
+
+    const data = response.data;
+    state.interactions = data.interactionHistory || [];
+    state.pagination.page = data.page || 1;
+    state.pagination.limit = data.limit || 10;
+    state.pagination.totalPages = data.totalPages || 1;
+    state.pagination.totalRecords = data.totalRecords || 0;
+
     console.log("Fetched interactions:", state.interactions);
   } catch (error) {
     state.error = "Failed to fetch interaction history.";
@@ -33,6 +109,8 @@ const fetchInteractions = async () => {
   } finally {
     state.isLoading = false;
   }
+
+  console.log("Updated state:", state);
 };
 
 // Columns configuration
@@ -96,6 +174,140 @@ onMounted(async () => {
   <div class="w-[90vw] mx-auto py-6">
     <h1 class="text-2xl font-bold mb-4">Interaction History</h1>
 
+    <!-- Filters Section -->
+    <div class="mb-4 space-y-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <!-- Campaign Name -->
+        <div>
+          <label class="block font-semibold">Campaign Name</label>
+          <input
+            v-model="state.filters.campaign_name"
+            class="w-full border rounded px-2 py-1"
+            placeholder="Enter campaign name"
+          />
+        </div>
+
+        <!-- Campaign Status -->
+        <div>
+          <label class="block font-semibold">Campaign Status</label>
+          <select
+            v-model="state.filters.campaign_status"
+            class="w-full border rounded px-2 py-1"
+          >
+            <option value="">All</option>
+            <option value="completed">Completed</option>
+            <option value="active">Active</option>
+            <option value="planned">Planned</option>
+          </select>
+        </div>
+
+        <!-- Target List Name -->
+        <div>
+          <label class="block font-semibold">Target List Name</label>
+          <input
+            v-model="state.filters.target_list_name"
+            class="w-full border rounded px-2 py-1"
+            placeholder="Enter target list name"
+          />
+        </div>
+
+        <!-- Account Name -->
+        <div>
+          <label class="block font-semibold">Account Name</label>
+          <input
+            v-model="state.filters.account_name"
+            class="w-full border rounded px-2 py-1"
+            placeholder="Enter account name"
+          />
+        </div>
+
+        <!-- Contact Name -->
+        <div>
+          <label class="block font-semibold">Contact Name</label>
+          <input
+            v-model="state.filters.contact_name"
+            class="w-full border rounded px-2 py-1"
+            placeholder="Enter contact name"
+          />
+        </div>
+
+        <!-- Contact Phone -->
+        <div>
+          <label class="block font-semibold">Contact Phone</label>
+          <input
+            v-model="state.filters.contact_phone"
+            class="w-full border rounded px-2 py-1"
+            placeholder="Enter contact phone"
+          />
+        </div>
+
+        <!-- Contact Outcome -->
+        <div>
+          <label class="block font-semibold">Contact Outcome</label>
+          <select
+            v-model="state.filters.contact_interaction_outcome"
+            class="w-full border rounded px-2 py-1"
+          >
+            <option value="">All</option>
+            <option value="interested">Interested</option>
+            <option value="not_interested">Not Interested</option>
+            <option value="busy">Busy</option>
+            <option value="not_reachable">No Answer</option>
+            <option value="unreachable">Unreachable</option>
+            <option value="other - check notes">Other</option>
+          </select>
+        </div>
+
+        <!-- Date Field Selection -->
+        <div>
+          <label class="block font-semibold">Date Field</label>
+          <select
+            v-model="state.filters.date_field"
+            class="w-full border rounded px-2 py-1"
+          >
+            <option value="contact_contacted_at">Contacted At</option>
+            <option value="contact_next_contact_date">Next Contact Date</option>
+          </select>
+        </div>
+
+        <!-- Date From -->
+        <div>
+          <label class="block font-semibold">Date From</label>
+          <input
+            type="date"
+            v-model="state.filters.date_from"
+            class="w-full border rounded px-2 py-1"
+          />
+        </div>
+
+        <!-- Date To -->
+        <div>
+          <label class="block font-semibold">Date To</label>
+          <input
+            type="date"
+            v-model="state.filters.date_to"
+            class="w-full border rounded px-2 py-1"
+          />
+        </div>
+      </div>
+
+      <!-- Filter and Clear Buttons -->
+      <div class="flex justify-start gap-4">
+        <button
+          @click="fetchInteractions"
+          class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          Apply Filters
+        </button>
+        <button
+          @click="clearFilters"
+          class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+        >
+          Clear Filters
+        </button>
+      </div>
+    </div>
+
     <!-- Toggle visibility checkboxes -->
     <div class="mb-4 space-y-2">
       <label
@@ -146,9 +358,13 @@ onMounted(async () => {
           <div
             v-for="column in visibleColumns"
             :key="column.key"
-            class="header-cell text-sm"
+            class="header-cell text-sm cursor-pointer"
+            @click="sortBy(column.key)"
           >
             {{ column.label }}
+            <span v-if="state.orderBy === column.key">
+              {{ state.direction === "ASC" ? "▼" : "▲" }}
+            </span>
           </div>
         </div>
 
@@ -203,6 +419,31 @@ onMounted(async () => {
         </div>
       </div>
     </div>
+  </div>
+  <div class="flex justify-center items-center mt-4 space-x-2">
+    <button
+      @click="goToPage(state.pagination.page - 1)"
+      :disabled="state.pagination.page === 1"
+      class="px-4 py-2 bg-gray-300 rounded-l disabled:opacity-50"
+    >
+      Previous
+    </button>
+    <button
+      v-for="page in state.pagination.totalPages"
+      :key="page"
+      @click="goToPage(page)"
+      class="px-4 py-2 border rounded"
+      :class="{ 'bg-blue-500 text-white': state.pagination.page === page }"
+    >
+      {{ page }}
+    </button>
+    <button
+      @click="goToPage(state.pagination.page + 1)"
+      :disabled="state.pagination.page === state.pagination.totalPages"
+      class="px-4 py-2 bg-gray-300 rounded-r disabled:opacity-50"
+    >
+      Next
+    </button>
   </div>
 </template>
 
