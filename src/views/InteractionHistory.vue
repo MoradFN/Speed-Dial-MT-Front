@@ -1,6 +1,9 @@
 <script setup>
 import { reactive, computed, onMounted } from "vue";
 import axios from "axios";
+import { fetchInteractionsAPI } from "@/services/api";
+
+/////MTTODO FIXA SÅ ATT NÄR DU ÄR PÅ SISTA PAGEN OCH FILTRERAR BORT ALA ITEMS FÖRUTOM EN
 
 // Reactive state
 const state = reactive({
@@ -88,13 +91,7 @@ const fetchInteractions = async () => {
   state.error = null;
 
   try {
-    const response = await axios.get(
-      "/api/index.php?route=interaction-history",
-      {
-        params: buildQueryParams(),
-      }
-    );
-
+    const response = await fetchInteractionsAPI(buildQueryParams());
     const data = response.data;
     state.interactions = data.interactionHistory || [];
     state.pagination.page = data.page || 1;
@@ -109,8 +106,6 @@ const fetchInteractions = async () => {
   } finally {
     state.isLoading = false;
   }
-
-  console.log("Updated state:", state);
 };
 
 // Columns configuration
