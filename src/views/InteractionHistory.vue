@@ -83,6 +83,7 @@ onMounted(fetchInteractions);
 <template>
   <div class="container mx-auto py-6">
     <h1 class="text-2xl font-bold mb-4">Interaction History</h1>
+
     <!-- Toggle visibility checkboxes -->
     <div class="mb-4 space-y-2">
       <label
@@ -119,32 +120,44 @@ onMounted(fetchInteractions);
       </button>
     </div>
 
-    <!-- Interaction Table -->
+    <!-- Interaction Rows -->
     <div v-else>
-      <table class="table-auto w-full bg-white border rounded-lg shadow-md">
-        <thead>
-          <tr>
-            <th
-              v-for="column in visibleColumns"
-              :key="column.key"
-              class="px-4 py-2"
-            >
-              {{ column.label }}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="interaction in state.interactions" :key="interaction.id">
-            <td
-              v-for="column in visibleColumns"
-              :key="column.key"
-              class="px-4 py-2"
-            >
-              {{ interaction[column.key] || "N/A" }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <!-- Header row -->
+      <div class="grid grid-cols-12 font-bold bg-gray-200 p-4 rounded-t-lg">
+        <div
+          v-for="column in visibleColumns"
+          :key="column.key"
+          class="col-span-2"
+        >
+          {{ column.label }}
+        </div>
+      </div>
+
+      <!-- Data rows -->
+      <div v-for="interaction in state.interactions" :key="interaction.id">
+        <!-- Main Row -->
+        <div class="grid grid-cols-12 p-4 border-b">
+          <div
+            v-for="column in visibleColumns"
+            :key="column.key"
+            class="col-span-2"
+          >
+            {{ interaction[column.key] || "N/A" }}
+          </div>
+        </div>
+
+        <!-- Details Row -->
+        <div class="bg-gray-100 p-4 border-b">
+          <p>
+            <strong>Campaign Description:</strong>
+            {{ interaction.campaign_description || "N/A" }}
+          </p>
+          <p>
+            <strong>Contact Notes:</strong>
+            {{ interaction.contact_notes || "N/A" }}
+          </p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
