@@ -15,6 +15,24 @@ const state = reactive({
     // showContactInteractionDuration: false,
   },
   expandedRows: new Set(),
+  filters: {
+    campaign_name: "",
+    campaign_status: "",
+    target_list_name: "",
+    account_name: "",
+    contact_name: "",
+    contact_phone: "",
+    contact_outcome: "",
+    date_field: "contact_contacted_at",
+    date_from: null,
+    date_to: null,
+  },
+  orderBy: "contact_contacted_at",
+  direction: "DESC",
+  pagination: {
+    page: 1,
+    limit: 10,
+  },
 });
 
 // Fetch interaction history
