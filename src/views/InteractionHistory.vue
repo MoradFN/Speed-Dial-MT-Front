@@ -120,44 +120,85 @@ onMounted(fetchInteractions);
       </button>
     </div>
 
-    <!-- Interaction Rows -->
+    <!-- Interaction Rows ##########################################-->
     <div v-else>
-      <!-- Header row -->
-      <div class="grid grid-cols-8 font-bold bg-gray-200 p-4 rounded-t-lg">
+      <!-- Interaction container -->
+      <div class="w-full">
+        <!-- Header row -->
         <div
-          v-for="column in visibleColumns"
-          :key="column.key"
-          class="col-span-1"
+          class="grid font-bold bg-gray-200 p-4 rounded-t-lg"
+          :style="{
+            gridTemplateColumns: `repeat(${visibleColumns.length}, minmax(auto, 1fr))`,
+          }"
         >
-          {{ column.label }}
-        </div>
-      </div>
-
-      <!-- Data rows -->
-      <div v-for="interaction in state.interactions" :key="interaction.id">
-        <!-- Main Row -->
-        <div class="grid grid-cols-8 p-4 border-b">
           <div
             v-for="column in visibleColumns"
             :key="column.key"
-            class="col-span-1"
+            class="header-cell text-sm"
           >
-            {{ interaction[column.key] || "N/A" }}
+            {{ column.label }}
           </div>
         </div>
 
-        <!-- Details Row -->
-        <div class="bg-gray-100 p-4 border-b">
-          <p>
-            <strong>Interaction Notes:</strong>
-            {{ interaction.contact_notes || "N/A" }}
-          </p>
-          <p>
-            <strong>Campaign Description:</strong>
-            {{ interaction.campaign_description || "N/A" }}
-          </p>
+        <!-- Data rows -->
+        <div v-for="interaction in state.interactions" :key="interaction.id">
+          <!-- Main Row -->
+          <div
+            class="grid p-4 border-b"
+            :style="{
+              gridTemplateColumns: `repeat(${visibleColumns.length}, minmax(auto, 1fr))`,
+            }"
+          >
+            <div
+              v-for="column in visibleColumns"
+              :key="column.key"
+              class="col-span-1"
+            >
+              {{ interaction[column.key] || "N/A" }}
+            </div>
+          </div>
+
+          <!-- Details Row -->
+          <div
+            class="bg-gray-100 p-4 border-b"
+            :style="{
+              gridColumn: `span ${visibleColumns.length}`,
+            }"
+          >
+            <p>
+              <strong>Interaction Notes:</strong>
+              {{ interaction.contact_notes || "N/A" }}
+            </p>
+            <p>
+              <strong>Campaign Description:</strong>
+              {{ interaction.campaign_description || "N/A" }}
+            </p>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.header-cell {
+  text-align: center;
+  word-wrap: break-word; /* Allow words to break naturally */
+  white-space: nowrap; /* Prevent text wrapping */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Show "..." for overflowing text */
+}
+</style>
+
+<!-- <div
+  class="grid font-bold bg-gray-200 p-4 rounded-t-lg"
+  :style="{ gridTemplateColumns: `repeat(${visibleColumns.length}, 1fr)` }"
+>
+  <div
+    v-for="column in visibleColumns"
+    :key="column.key"
+    class="header-cell text-sm"
+  >
+    {{ column.label }}
+  </div>
+</div>  -->
