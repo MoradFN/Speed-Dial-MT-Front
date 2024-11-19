@@ -14,6 +14,7 @@ const state = reactive({
     // showContactPhone: false,
     // showContactInteractionDuration: false,
   },
+  expandedRows: new Set(),
 });
 
 // Fetch interaction history
@@ -77,8 +78,18 @@ const visibleColumns = computed(() =>
   columns.filter((column) => !column.visibility || column.visibility())
 );
 
+const toggleRow = (id) => {
+  if (state.expandedRows.has(id)) {
+    state.expandedRows.delete(id); // Remove the ID if it exists
+  } else {
+    state.expandedRows.add(id); // Add the ID if it doesn't exist
+  }
+};
+
 // Fetch data on mount
-onMounted(fetchInteractions);
+onMounted(async () => {
+  await fetchInteractions();
+});
 </script>
 
 <template>
@@ -145,10 +156,11 @@ onMounted(fetchInteractions);
         <div v-for="interaction in state.interactions" :key="interaction.id">
           <!-- Main Row -->
           <div
-            class="grid p-4 border-b"
+            class="grid p-4 border-b cursor-pointer hover:bg-gray-200"
             :style="{
               gridTemplateColumns: `repeat(${visibleColumns.length}, minmax(auto, 1fr))`,
             }"
+            @click="toggleRow(interaction.id)"
           >
             <div
               v-for="column in visibleColumns"
@@ -161,6 +173,7 @@ onMounted(fetchInteractions);
 
           <!-- Details Row -->
           <div
+            v-if="state.expandedRows.has(interaction.id)"
             class="bg-gray-100 p-4 border-b"
             :style="{
               gridColumn: `span ${visibleColumns.length}`,
@@ -200,5 +213,16 @@ onMounted(fetchInteractions);
   white-space: nowrap; /* Prevent text wrapping */
   overflow: hidden;
   text-overflow: ellipsis; /* Show "..." for overflowing text */
+}
+.grid {
+  transition: background-color 0.2s ease;
+}
+
+.grid:hover {
+  background-color: #f3f4f6;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
 </style>
