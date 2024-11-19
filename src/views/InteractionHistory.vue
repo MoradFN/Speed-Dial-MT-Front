@@ -11,8 +11,8 @@ const state = reactive({
     showCampaignStartDate: false,
     showCampaignEndDate: false,
     showCampaignStatus: false,
-    showContactPhone: false,
-    showContactInteractionDuration: false,
+    // showContactPhone: false,
+    // showContactInteractionDuration: false,
   },
 });
 
@@ -25,6 +25,7 @@ const fetchInteractions = async () => {
       "/api/index.php?route=interaction-history"
     );
     state.interactions = response.data.interactionHistory || [];
+    console.log("Fetched interactions:", state.interactions);
   } catch (error) {
     state.error = "Failed to fetch interaction history.";
     console.error(error);
@@ -55,20 +56,20 @@ const columns = [
   { key: "target_list_name", label: "Target List Name" },
   { key: "account_name", label: "Account Name" },
   { key: "contact_name", label: "Contact Name" },
-  { key: "outcome", label: "Outcome" },
-  { key: "contacted_at", label: "Contacted At" },
-  { key: "next_contact_date", label: "Next Contact Date" },
-  {
-    key: "contact_phone",
-    label: "Contact Phone",
-    visibility: () => state.extraColumnVisibility.showContactPhone,
-  },
-  {
-    key: "contact_interaction_duration",
-    label: "Contact Interaction Duration",
-    visibility: () =>
-      state.extraColumnVisibility.showContactInteractionDuration,
-  },
+  { key: "contact_interaction_outcome", label: "Outcome" },
+  { key: "contact_contacted_at", label: "Contacted At" },
+  { key: "contact_next_contact_date", label: "Next Contact Date" },
+  // {
+  //   key: "contact_phone",
+  //   label: "Contact Phone",
+  //   visibility: () => state.extraColumnVisibility.showContactPhone,
+  // },
+  // {
+  //   key: "contact_interaction_duration",
+  //   label: "Contact Interaction Duration",
+  //   visibility: () =>
+  //     state.extraColumnVisibility.showContactInteractionDuration,
+  // },
 ];
 
 // Computed property for visible columns
@@ -81,7 +82,7 @@ onMounted(fetchInteractions);
 </script>
 
 <template>
-  <div class="container mx-auto py-6">
+  <div class="w-[90vw] mx-auto py-6">
     <h1 class="text-2xl font-bold mb-4">Interaction History</h1>
 
     <!-- Toggle visibility checkboxes -->
@@ -120,32 +121,84 @@ onMounted(fetchInteractions);
       </button>
     </div>
 
-    <!-- Interaction Table -->
+    <!-- Interaction Rows ##########################################-->
     <div v-else>
-      <table class="table-auto w-full bg-white border rounded-lg shadow-md">
-        <thead>
-          <tr>
-            <th
+      <!-- Interaction container -->
+      <div class="w-full">
+        <!-- Header row -->
+        <div
+          class="grid font-bold bg-gray-200 p-4 rounded-t-lg"
+          :style="{
+            gridTemplateColumns: `repeat(${visibleColumns.length}, minmax(auto, 1fr))`,
+          }"
+        >
+          <div
+            v-for="column in visibleColumns"
+            :key="column.key"
+            class="header-cell text-sm"
+          >
+            {{ column.label }}
+          </div>
+        </div>
+
+        <!-- Data rows -->
+        <div v-for="interaction in state.interactions" :key="interaction.id">
+          <!-- Main Row -->
+          <div
+            class="grid p-4 border-b"
+            :style="{
+              gridTemplateColumns: `repeat(${visibleColumns.length}, minmax(auto, 1fr))`,
+            }"
+          >
+            <div
               v-for="column in visibleColumns"
               :key="column.key"
-              class="px-4 py-2"
-            >
-              {{ column.label }}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="interaction in state.interactions" :key="interaction.id">
-            <td
-              v-for="column in visibleColumns"
-              :key="column.key"
-              class="px-4 py-2"
+              class="col-span-1"
             >
               {{ interaction[column.key] || "N/A" }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            </div>
+          </div>
+
+          <!-- Details Row -->
+          <div
+            class="bg-gray-100 p-4 border-b"
+            :style="{
+              gridColumn: `span ${visibleColumns.length}`,
+            }"
+          >
+            <p>
+              <strong>Contact Phone:</strong>
+              {{ interaction.contact_phone || "N/A" }}
+            </p>
+            <p>
+              <strong>Interaction Duration:</strong>
+              {{ interaction.contact_interaction_duration || "N/A" }}
+            </p>
+            <p>
+              <strong>Interaction Notes:</strong>
+              {{ interaction.contact_notes || "N/A" }}
+            </p>
+            <p>
+              <strong>Campaign Description:</strong>
+              {{ interaction.campaign_description || "N/A" }}
+            </p>
+            <p>
+              <strong>Target List Description:</strong>
+              {{ interaction.target_list_description || "N/A" }}
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.header-cell {
+  text-align: center;
+  word-wrap: break-word; /* Allow words to break naturally */
+  white-space: nowrap; /* Prevent text wrapping */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Show "..." for overflowing text */
+}
+</style>
