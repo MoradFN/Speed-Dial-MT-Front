@@ -35,15 +35,72 @@ const state = reactive({
   },
 });
 
+////////////////////////// SORTING AND FILTERING
+const buildQueryParams = () => {
+  return {
+    ...state.filters,
+    page: state.pagination.page,
+    limit: state.pagination.limit,
+    orderBy: state.orderBy,
+    direction: state.direction,
+  };
+};
+
+const sortBy = (column) => {
+  if (state.orderBy === column) {
+    state.direction = state.direction === "ASC" ? "DESC" : "ASC";
+  } else {
+    state.orderBy = column;
+    state.direction = "ASC";
+  }
+  fetchInteractions(); // Fetch updated data
+};
+
+const clearFilters = () => {
+  state.filters = {
+    campaign_name: "",
+    campaign_status: "",
+    target_list_name: "",
+    account_name: "",
+    contact_name: "",
+    contact_phone: "",
+    contact_outcome: "",
+    date_field: "contact_contacted_at",
+    date_from: null,
+    date_to: null,
+  };
+  fetchInteractions();
+};
+
+const goToPage = (page) => {
+  if (page > 0 && page <= state.pagination.totalPages) {
+    state.pagination.page = page;
+    fetchInteractions();
+  }
+};
+
+////////////////////////////////////////////////
+
 // Fetch interaction history
 const fetchInteractions = async () => {
   state.isLoading = true;
   state.error = null;
+
   try {
     const response = await axios.get(
-      "/api/index.php?route=interaction-history"
+      "/api/index.php?route=interaction-history",
+      {
+        params: buildQueryParams(),
+      }
     );
-    state.interactions = response.data.interactionHistory || [];
+
+    const data = response.data;
+    state.interactions = data.interactionHistory || [];
+    state.pagination.page = data.page || 1;
+    state.pagination.limit = data.limit || 10;
+    state.pagination.totalPages = data.totalPages || 1;
+    state.pagination.totalRecords = data.totalRecords || 0;
+
     console.log("Fetched interactions:", state.interactions);
   } catch (error) {
     state.error = "Failed to fetch interaction history.";
@@ -164,9 +221,13 @@ onMounted(async () => {
           <div
             v-for="column in visibleColumns"
             :key="column.key"
-            class="header-cell text-sm"
+            class="header-cell text-sm cursor-pointer"
+            @click="sortBy(column.key)"
           >
             {{ column.label }}
+            <span v-if="state.orderBy === column.key">
+              {{ state.direction === "ASC" ? "▼" : "▲" }}
+            </span>
           </div>
         </div>
 
@@ -221,6 +282,28 @@ onMounted(async () => {
         </div>
       </div>
     </div>
+  </div>
+  <div class="pagination">
+    <button
+      @click="goToPage(state.pagination.page - 1)"
+      :disabled="state.pagination.page === 1"
+    >
+      Previous
+    </button>
+    <button
+      v-for="page in state.pagination.totalPages"
+      :key="page"
+      @click="goToPage(page)"
+      :class="{ active: page === state.pagination.page }"
+    >
+      {{ page }}
+    </button>
+    <button
+      @click="goToPage(state.pagination.page + 1)"
+      :disabled="state.pagination.page === state.pagination.totalPages"
+    >
+      Next
+    </button>
   </div>
 </template>
 
