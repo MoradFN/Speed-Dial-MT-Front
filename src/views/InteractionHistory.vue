@@ -22,7 +22,7 @@ const state = reactive({
     account_name: "",
     contact_name: "",
     contact_phone: "",
-    contact_outcome: "",
+    contact_interaction_outcome: "",
     date_field: "contact_contacted_at",
     date_from: null,
     date_to: null,
@@ -64,12 +64,13 @@ const clearFilters = () => {
     account_name: "",
     contact_name: "",
     contact_phone: "",
-    contact_outcome: "",
+    contact_interaction_outcome: "",
     date_field: "contact_contacted_at",
     date_from: null,
     date_to: null,
   };
-  fetchInteractions();
+  // state.pagination.page = 1; // Reset to the first page
+  fetchInteractions(); // Fetch updated results
 };
 
 const goToPage = (page) => {
@@ -108,6 +109,8 @@ const fetchInteractions = async () => {
   } finally {
     state.isLoading = false;
   }
+
+  console.log("Updated state:", state);
 };
 
 // Columns configuration
@@ -170,6 +173,7 @@ onMounted(async () => {
 <template>
   <div class="w-[90vw] mx-auto py-6">
     <h1 class="text-2xl font-bold mb-4">Interaction History</h1>
+
     <!-- Filters Section -->
     <div class="mb-4 space-y-4">
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
@@ -241,14 +245,16 @@ onMounted(async () => {
         <div>
           <label class="block font-semibold">Contact Outcome</label>
           <select
-            v-model="state.filters.contact_outcome"
+            v-model="state.filters.contact_interaction_outcome"
             class="w-full border rounded px-2 py-1"
           >
             <option value="">All</option>
             <option value="interested">Interested</option>
             <option value="not_interested">Not Interested</option>
             <option value="busy">Busy</option>
+            <option value="not_reachable">No Answer</option>
             <option value="unreachable">Unreachable</option>
+            <option value="other - check notes">Other</option>
           </select>
         </div>
 
