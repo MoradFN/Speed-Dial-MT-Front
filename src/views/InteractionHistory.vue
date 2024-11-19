@@ -189,16 +189,3 @@ onMounted(fetchInteractions);
   text-overflow: ellipsis; /* Show "..." for overflowing text */
 }
 </style>
-
-<!-- <div
-  class="grid font-bold bg-gray-200 p-4 rounded-t-lg"
-  :style="{ gridTemplateColumns: `repeat(${visibleColumns.length}, 1fr)` }"
->
-  <div
-    v-for="column in visibleColumns"
-    :key="column.key"
-    class="header-cell text-sm"
-  >
-    {{ column.label }}
-  </div>
-</div>  -->
