@@ -1,408 +1,151 @@
 <script setup>
-import { ref, reactive, onMounted, watch } from "vue";
+import { reactive, computed, onMounted } from "vue";
 import axios from "axios";
 
-// Reactive state for interaction history
+// Reactive state
 const state = reactive({
-  interactions: [], // Fetched interaction history
-  totalPages: 1,
-  totalRecords: 0,
-  page: 1,
-  limit: 5,
-  orderBy: "contact_contacted_at",
-  direction: "DESC",
-  filters: {
-    user_name: "",
-    campaign_name: "",
-    campaign_status: "",
-    target_list_name: "",
-    account_name: "",
-    contact_name: "",
-    contact_phone: "",
-    contact_interaction_outcome: "",
-    date_field: "contact_contacted_at",
-    date_from: "",
-    date_to: "",
-  },
+  interactions: [],
   isLoading: true,
   error: null,
+  extraColumnVisibility: {
+    showCampaignStartDate: false,
+    showCampaignEndDate: false,
+    showCampaignStatus: false,
+    showContactPhone: false,
+    showContactInteractionDuration: false,
+  },
 });
 
-// Fetch data from the backend
+// Fetch interaction history
 const fetchInteractions = async () => {
   state.isLoading = true;
   state.error = null;
-
   try {
-    const params = {
-      page: state.page,
-      limit: state.limit,
-      orderBy: state.orderBy,
-      direction: state.direction,
-      ...state.filters,
-    };
-
     const response = await axios.get(
-      "/api/index.php?route=interaction-history",
-      {
-        params,
-      }
+      "/api/index.php?route=interaction-history"
     );
-
-    const data = response.data;
-    state.interactions = data.interactionHistory || [];
-    state.totalPages = data.totalPages || 1;
-    state.totalRecords = data.totalRecords || 0;
+    state.interactions = response.data.interactionHistory || [];
   } catch (error) {
-    state.error = "Failed to load interaction history. Please try again.";
+    state.error = "Failed to fetch interaction history.";
     console.error(error);
   } finally {
     state.isLoading = false;
   }
 };
 
-// Fetch data on component mount
-onMounted(fetchInteractions);
+// Columns configuration
+const columns = [
+  { key: "user_name", label: "User Name" },
+  { key: "campaign_name", label: "Campaign Name" },
+  {
+    key: "campaign_start_date",
+    label: "Campaign Start Date",
+    visibility: () => state.extraColumnVisibility.showCampaignStartDate,
+  },
+  {
+    key: "campaign_end_date",
+    label: "Campaign End Date",
+    visibility: () => state.extraColumnVisibility.showCampaignEndDate,
+  },
+  {
+    key: "campaign_status",
+    label: "Campaign Status",
+    visibility: () => state.extraColumnVisibility.showCampaignStatus,
+  },
+  { key: "target_list_name", label: "Target List Name" },
+  { key: "account_name", label: "Account Name" },
+  { key: "contact_name", label: "Contact Name" },
+  { key: "outcome", label: "Outcome" },
+  { key: "contacted_at", label: "Contacted At" },
+  { key: "next_contact_date", label: "Next Contact Date" },
+  {
+    key: "contact_phone",
+    label: "Contact Phone",
+    visibility: () => state.extraColumnVisibility.showContactPhone,
+  },
+  {
+    key: "contact_interaction_duration",
+    label: "Contact Interaction Duration",
+    visibility: () =>
+      state.extraColumnVisibility.showContactInteractionDuration,
+  },
+];
 
-// Watch for changes to pagination or filters
-watch(
-  [() => state.page, () => state.orderBy, () => state.filters],
-  fetchInteractions
+// Computed property for visible columns
+const visibleColumns = computed(() =>
+  columns.filter((column) => !column.visibility || column.visibility())
 );
 
-// Handle sorting
-const sortBy = (column) => {
-  if (state.orderBy === column) {
-    state.direction = state.direction === "ASC" ? "DESC" : "ASC";
-  } else {
-    state.orderBy = column;
-    state.direction = "ASC";
-  }
-};
-
-// Handle pagination// Handle pagination
-const goToPage = (page) => {
-  if (page > 0 && page <= state.totalPages) {
-    state.page = page;
-  }
-};
+// Fetch data on mount
+onMounted(fetchInteractions);
 </script>
 
 <template>
   <div class="container mx-auto py-6">
     <h1 class="text-2xl font-bold mb-4">Interaction History</h1>
 
-    <!-- Filters -->
-    <div class="bg-gray-100 p-4 rounded-lg mb-6">
-      <h2 class="text-xl font-bold mb-2">Filters</h2>
-      <form
-        @submit.prevent="fetchInteractions"
-        class="grid grid-cols-1 md:grid-cols-3 gap-4"
+    <!-- Toggle visibility checkboxes -->
+    <div class="mb-4 space-y-2">
+      <label
+        v-for="(value, key) in state.extraColumnVisibility"
+        :key="key"
+        class="flex items-center"
       >
-        <div>
-          <label for="campaign_name" class="block font-semibold"
-            >Campaign Name:</label
-          >
-          <input
-            type="text"
-            id="campaign_name"
-            v-model="state.filters.campaign_name"
-            class="w-full border rounded px-2 py-1"
-            placeholder="Enter campaign name"
-          />
-        </div>
-        <div>
-          <label for="account_name" class="block font-semibold"
-            >Account Name:</label
-          >
-          <input
-            type="text"
-            id="account_name"
-            v-model="state.filters.account_name"
-            class="w-full border rounded px-2 py-1"
-            placeholder="Enter account name"
-          />
-        </div>
-        <div>
-          <label for="contact_name" class="block font-semibold"
-            >Contact Name:</label
-          >
-          <input
-            type="text"
-            id="contact_name"
-            v-model="state.filters.contact_name"
-            class="w-full border rounded px-2 py-1"
-            placeholder="Enter contact name"
-          />
-        </div>
-        <div>
-          <label for="date_from" class="block font-semibold">Date From:</label>
-          <input
-            type="date"
-            id="date_from"
-            v-model="state.filters.date_from"
-            class="w-full border rounded px-2 py-1"
-          />
-        </div>
-        <div>
-          <label for="date_to" class="block font-semibold">Date To:</label>
-          <input
-            type="date"
-            id="date_to"
-            v-model="state.filters.date_to"
-            class="w-full border rounded px-2 py-1"
-          />
-        </div>
-        <div>
-          <button
-            type="submit"
-            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          >
-            Apply Filters
-          </button>
-        </div>
-      </form>
+        <input
+          type="checkbox"
+          v-model="state.extraColumnVisibility[key]"
+          class="mr-2"
+        />
+        <!-- använder key och tar bort show och lägger till space -->
+        {{
+          key
+            .replace("show", "")
+            .replace(/([A-Z])/g, " $1")
+            .trim()
+        }}
+      </label>
     </div>
 
-    <!-- Table -->
+    <!-- Loading state -->
     <div v-if="state.isLoading" class="text-center py-4">Loading...</div>
+
+    <!-- Error state -->
     <div v-else-if="state.error" class="text-red-500 py-4">
       {{ state.error }}
+      <button
+        @click="fetchInteractions"
+        class="bg-blue-500 text-white px-4 py-2 rounded mt-2 hover:bg-blue-600"
+      >
+        Retry
+      </button>
     </div>
+
+    <!-- Interaction Table -->
     <div v-else>
       <table class="table-auto w-full bg-white border rounded-lg shadow-md">
         <thead>
           <tr>
             <th
-              @click="sortBy('user_name')"
-              :class="{ 'bg-gray-200': state.orderBy === 'user_name' }"
-              style="cursor: pointer"
-              :aria-label="`Sort by ${
-                state.orderBy === 'user_name' ? 'descending' : 'ascending'
-              } order`"
+              v-for="column in visibleColumns"
+              :key="column.key"
+              class="px-4 py-2"
             >
-              User Name
-              <span v-if="state.orderBy === 'user_name'">
-                {{ state.direction === "ASC" ? "▲" : "▼" }}
-              </span>
+              {{ column.label }}
             </th>
-            <th
-              @click="sortBy('campaign_name')"
-              :class="{ 'bg-gray-200': state.orderBy === 'campaign_name' }"
-              style="cursor: pointer"
-              :aria-label="`Sort by ${
-                state.orderBy === 'campaign_name' ? 'descending' : 'ascending'
-              } order`"
-            >
-              Campaign Name
-              <span v-if="state.orderBy === 'campaign_name'">
-                {{ state.direction === "ASC" ? "▲" : "▼" }}
-              </span>
-            </th>
-            <th>Campaign Description</th>
-            <th
-              @click="sortBy('campaign_start_date')"
-              :class="{
-                'bg-gray-200': state.orderBy === 'campaign_start_date',
-              }"
-              style="cursor: pointer"
-              :aria-label="`Sort by ${
-                state.orderBy === 'campaign_start_date'
-                  ? 'descending'
-                  : 'ascending'
-              } order`"
-            >
-              Campaign Start Date
-              <span v-if="state.orderBy === 'campaign_start_date'">
-                {{ state.direction === "ASC" ? "▲" : "▼" }}
-              </span>
-            </th>
-            <th
-              @click="sortBy('campaign_end_date')"
-              :class="{ 'bg-gray-200': state.orderBy === 'campaign_end_date' }"
-              style="cursor: pointer"
-              :aria-label="`Sort by ${
-                state.orderBy === 'campaign_end_date'
-                  ? 'descending'
-                  : 'ascending'
-              } order`"
-            >
-              Campaign End Date
-              <span v-if="state.orderBy === 'campaign_end_date'">
-                {{ state.direction === "ASC" ? "▲" : "▼" }}
-              </span>
-            </th>
-            <th
-              @click="sortBy('campaign_status')"
-              :class="{ 'bg-gray-200': state.orderBy === 'campaign_status' }"
-              style="cursor: pointer"
-              :aria-label="`Sort by ${
-                state.orderBy === 'campaign_status' ? 'descending' : 'ascending'
-              } order`"
-            >
-              Campaign Status
-              <span v-if="state.orderBy === 'campaign_status'">
-                {{ state.direction === "ASC" ? "▲" : "▼" }}
-              </span>
-            </th>
-            <th
-              @click="sortBy('target_list_name')"
-              :class="{ 'bg-gray-200': state.orderBy === 'target_list_name' }"
-              style="cursor: pointer"
-              :aria-label="`Sort by ${
-                state.orderBy === 'target_list_name'
-                  ? 'descending'
-                  : 'ascending'
-              } order`"
-            >
-              Target List Name
-              <span v-if="state.orderBy === 'target_list_name'">
-                {{ state.direction === "ASC" ? "▲" : "▼" }}
-              </span>
-            </th>
-            <th>Target List Description</th>
-            <th
-              @click="sortBy('account_name')"
-              :class="{ 'bg-gray-200': state.orderBy === 'account_name' }"
-              style="cursor: pointer"
-              :aria-label="`Sort by ${
-                state.orderBy === 'account_name' ? 'descending' : 'ascending'
-              } order`"
-            >
-              Account Name
-              <span v-if="state.orderBy === 'account_name'">
-                {{ state.direction === "ASC" ? "▲" : "▼" }}
-              </span>
-            </th>
-            <th
-              @click="sortBy('contact_name')"
-              :class="{ 'bg-gray-200': state.orderBy === 'contact_name' }"
-              style="cursor: pointer"
-              :aria-label="`Sort by ${
-                state.orderBy === 'contact_name' ? 'descending' : 'ascending'
-              } order`"
-            >
-              Contact Name
-              <span v-if="state.orderBy === 'contact_name'">
-                {{ state.direction === "ASC" ? "▲" : "▼" }}
-              </span>
-            </th>
-            <th
-              @click="sortBy('contact_interaction_outcome')"
-              :class="{
-                'bg-gray-200': state.orderBy === 'contact_interaction_outcome',
-              }"
-              style="cursor: pointer"
-              :aria-label="`Sort by ${
-                state.orderBy === 'contact_interaction_outcome'
-                  ? 'descending'
-                  : 'ascending'
-              } order`"
-            >
-              Contact Outcome
-              <span v-if="state.orderBy === 'contact_interaction_outcome'">
-                {{ state.direction === "ASC" ? "▲" : "▼" }}
-              </span>
-            </th>
-            <th
-              @click="sortBy('contact_phone')"
-              :class="{ 'bg-gray-200': state.orderBy === 'contact_phone' }"
-              style="cursor: pointer"
-              :aria-label="`Sort by ${
-                state.orderBy === 'contact_phone' ? 'descending' : 'ascending'
-              } order`"
-            >
-              Contact Phone
-              <span v-if="state.orderBy === 'contact_phone'">
-                {{ state.direction === "ASC" ? "▲" : "▼" }}
-              </span>
-            </th>
-            <th>Contact Notes</th>
-            <th
-              @click="sortBy('contact_contacted_at')"
-              :class="{
-                'bg-gray-200': state.orderBy === 'contact_contacted_at',
-              }"
-              style="cursor: pointer"
-              :aria-label="`Sort by ${
-                state.orderBy === 'contact_contacted_at'
-                  ? 'descending'
-                  : 'ascending'
-              } order`"
-            >
-              Contacted At
-              <span v-if="state.orderBy === 'contact_contacted_at'">
-                {{ state.direction === "ASC" ? "▲" : "▼" }}
-              </span>
-            </th>
-            <th
-              @click="sortBy('contact_next_contact_date')"
-              :class="{
-                'bg-gray-200': state.orderBy === 'contact_next_contact_date',
-              }"
-              style="cursor: pointer"
-              :aria-label="`Sort by ${
-                state.orderBy === 'contact_next_contact_date'
-                  ? 'descending'
-                  : 'ascending'
-              } order`"
-            >
-              Next Contact Date
-              <span v-if="state.orderBy === 'contact_next_contact_date'">
-                {{ state.direction === "ASC" ? "▲" : "▼" }}
-              </span>
-            </th>
-            <th>Interaction Duration</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="interaction in state.interactions" :key="interaction.id">
-            <td>{{ interaction.user_name }}</td>
-            <td>{{ interaction.campaign_name }}</td>
-            <td>{{ interaction.campaign_description }}</td>
-            <td>{{ interaction.campaign_start_date }}</td>
-            <td>{{ interaction.campaign_end_date }}</td>
-            <td>{{ interaction.campaign_status }}</td>
-            <td>{{ interaction.target_list_name }}</td>
-            <td>{{ interaction.target_list_description }}</td>
-            <td>{{ interaction.account_name }}</td>
-            <td>{{ interaction.contact_name }}</td>
-            <td>{{ interaction.contact_interaction_outcome }}</td>
-            <td>{{ interaction.contact_phone }}</td>
-            <td>{{ interaction.contact_notes }}</td>
-            <td>{{ interaction.contact_contacted_at }}</td>
-            <td>{{ interaction.contact_next_contact_date }}</td>
-            <td>{{ interaction.contact_interaction_duration }}</td>
+            <td
+              v-for="column in visibleColumns"
+              :key="column.key"
+              class="px-4 py-2"
+            >
+              {{ interaction[column.key] || "N/A" }}
+            </td>
           </tr>
         </tbody>
       </table>
-
-      <!-- Pagination -->
-      <div class="flex justify-center mt-4">
-        <button
-          @click="goToPage(state.page - 1)"
-          :disabled="state.page === 1"
-          class="px-4 py-2 bg-gray-300 rounded-l"
-        >
-          Previous
-        </button>
-        <button
-          @click="goToPage(page)"
-          v-for="page in state.totalPages"
-          :key="page"
-          class="px-4 py-2"
-          :class="{ 'bg-blue-500 text-white': page === state.page }"
-        >
-          {{ page }}
-        </button>
-        <button
-          @click="goToPage(state.page + 1)"
-          :disabled="state.page === state.totalPages"
-          class="px-4 py-2 bg-gray-300 rounded-r"
-        >
-          Next
-        </button>
-      </div>
     </div>
   </div>
 </template>
