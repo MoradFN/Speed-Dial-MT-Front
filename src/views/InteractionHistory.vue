@@ -25,6 +25,7 @@ const fetchInteractions = async () => {
       "/api/index.php?route=interaction-history"
     );
     state.interactions = response.data.interactionHistory || [];
+    console.log("Fetched interactions:", state.interactions);
   } catch (error) {
     state.error = "Failed to fetch interaction history.";
     console.error(error);
@@ -56,7 +57,7 @@ const columns = [
   { key: "account_name", label: "Account Name" },
   { key: "contact_name", label: "Contact Name" },
   { key: "contact_interaction_outcome", label: "Outcome" },
-  { key: "contacted_at", label: "Contacted At" },
+  { key: "contact_contacted_at", label: "Contacted At" },
   { key: "contact_next_contact_date", label: "Next Contact Date" },
   // {
   //   key: "contact_phone",
