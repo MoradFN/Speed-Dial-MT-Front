@@ -1,7 +1,7 @@
 High-Level Plan
 API Integration:
 
-Fetch interaction history data from the provided API (/index.php?route=interaction-history) with support for query parameters like filtering, sorting, and pagination.
+Fetch interaction history data from the provided API (/api/index.php?route=interaction-history) with support for query parameters like filtering, sorting, and pagination.
 Frontend Features:
 
 Display interaction history in a table.
@@ -15,7 +15,7 @@ State Management:
 
 Use reactive or ref for managing interaction data, filters, and pagination.
 
-Toast
+Toast functionality
 
 ---------------------------------------------------------------------------------------------------------------------------------------
 
@@ -370,3 +370,160 @@ $prevPageUrl = "?" . http_build_query(array_merge($_GET, ['page' => $prevPage]))
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
+
+
+NEW PROMPT#######################################################################
+
+
+How do i manage filters and sort orders in the best way?
+
+Table headers are clickable to sort pressed column by ASC or DESC while keeping search filtering and sorting the filtered result if they are set and vice versa, keep ASC and DESC if it is set when i search.
+
+I want to be able to search and filter for:
+Campaign Name:
+Campaign Status:  (Select a status Drop down).
+Target List Name:
+Account Name:
+Contact Name:
+Contact Phone:
+Contact Outcome:  (Select an outcome Drop Down)
+Date Field:  Drop down (Contacted At or Next Contact Date) with input : From Date: or  To Date: or both.
+
+[Filter button] and [Clear Filter] button.
+
+
+Enable pagination with navigation between pages while keeping filtering and sorting if set.
+
+Use reactive.
+
+filtration functionality examples:
+/api/index.php?route=interaction-history &orderBy=user_name&direction=DESC
+
+/api/index.php?route=interaction-history&orderBy=user_name&direction=DESC
+/api/index.php?route=interaction-history&orderBy=campaign_name&direction=DESC
+/api/index.php?route=interaction-history&orderBy=campaign_start_date&direction=DESC
+/api/index.php?route=interaction-history&orderBy=campaign_end_date&direction=DESC
+/api/index.php?route=interaction-history&orderBy=campaign_status&direction=DESC
+/api/index.php?route=interaction-history&orderBy=target_list_name&direction=DESC
+/api/index.php?route=interaction-history&orderBy=account_name&direction=DESC
+/api/index.php?route=interaction-history&orderBy=contact_name&direction=DESC
+/api/index.php?route=interaction-history&orderBy=contact_name&direction=DESC
+/api/index.php?route=interaction-history&orderBy=contact_interaction_outcome&direction=DESC
+/api/index.php?route=interaction-history&orderBy=contact_phone&direction=DESC
+/api/index.php?route=interaction-history&orderBy=contact_contacted_at&direction=DESC
+/api/index.php?route=interaction-history&orderBy=contact_contacted_at&direction=DESC
+/api/index.php?route=interaction-history&orderBy=contact_next_contact_date&direction=DESC
+
+
+/api/index.php?route=interaction-history&campaign_name=
+/api/index.php?route=interaction-history&campaign_status=
+/api/index.php?route=interaction-history&account_name=
+/api/index.php?route=interaction-history&contact_name=
+/api/index.php?route=interaction-history&contact_interaction_outcome=
+/api/index.php?route=interaction-history&contact_phone=
+/api/index.php?route=interaction-history&target_list_name=
+
+/api/index.php?route=interaction-history&date_field=contact_contacted_at&date_from=&date_to=
+/api/index.php?route=interaction-history&date_field=contact_next_contact_date&date_from=&date_to=
+/api/index.php?route=interaction-history&page=6&limit=2
+
+/api/index.php?route=interaction-history&campaign_name=&campaign_status=&account_name=&contact_name=&contact_interaction_outcome=&contact_phone=&date_field=contact_contacted_at&target_list_name=&date_from=&date_to=
+/api/index.php?route=interaction-history&campaign_name=&campaign_status=&account_name=&contact_name=&contact_interaction_outcome=&contact_phone=&date_field=contact_next_contact_date&target_list_name=&date_from=&date_to=
+
+
+
+
+example response from API: http://localhost:8080/index.php?route=interaction-history
+{
+    "interactionHistory": [
+        {
+            "id": 166,
+            "account_id": 1,
+            "user_id": 1,
+            "target_list_id": 1,
+            "related_contact_interaction_id": 186,
+            "outcome": null,
+            "notes": null,
+            "contact_method": null,
+            "next_contact_date": null,
+            "contacted_at": "2024-11-18 12:50:02",
+            "interaction_duration": null,
+            "created_at": "2024-11-18 12:50:02",
+            "updated_at": "2024-11-18 12:50:02",
+            "account_name": "Acme Corporation",
+            "contact_name": "John Doe",
+            "target_list_name": "targetlist-1",
+            "target_list_description": "A random description of the currect targetlist which is targetlist number 1.",
+            "user_name": "admin_user",
+            "campaign_name": "Summer Sales Campaign",
+            "campaign_description": "Targeting summer product sales",
+            "campaign_start_date": "2024-06-01",
+            "campaign_end_date": "2024-08-31",
+            "campaign_status": "completed",
+            "contact_interaction_outcome": "Busy",
+            "contact_phone": "555-1234",
+            "contact_notes": "last frontend test",
+            "contact_contacted_at": "2024-11-18 12:50:02",
+            "contact_next_contact_date": "2024-11-22 00:00:00",
+            "contact_interaction_duration": null
+        },
+        {
+            "id": 165,
+            "account_id": 1,
+            "user_id": 1,
+            "target_list_id": 1,
+            "related_contact_interaction_id": 185,
+            "outcome": null,
+            "notes": null,
+            "contact_method": null,
+            "next_contact_date": null,
+            "contacted_at": "2024-11-18 12:38:06",
+            "interaction_duration": null,
+            "created_at": "2024-11-18 12:38:06",
+            "updated_at": "2024-11-18 12:38:06",
+            "account_name": "Acme Corporation",
+            "contact_name": "John Doe",
+            "target_list_name": "targetlist-1",
+            "target_list_description": "A random description of the currect targetlist which is targetlist number 1.",
+            "user_name": "admin_user",
+            "campaign_name": "Summer Sales Campaign",
+            "campaign_description": "Targeting summer product sales",
+            "campaign_start_date": "2024-06-01",
+            "campaign_end_date": "2024-08-31",
+            "campaign_status": "completed",
+            "contact_interaction_outcome": "Interested",
+            "contact_phone": "555-1234",
+            "contact_notes": null,
+            "contact_contacted_at": "2024-11-18 12:38:06",
+            "contact_next_contact_date": null,
+            "contact_interaction_duration": null
+        },
+    ],
+    "totalPages": 2,
+    "totalRecords": 18,
+    "page": 1,
+    "limit": 10,
+    "filters": {
+        "user_name": null,
+        "campaign_name": null,
+        "campaign_start_date": null,
+        "campaign_end_date": null,
+        "campaign_status": null,
+        "target_list_name": null,
+        "target_list_description": null,
+        "account_name": null,
+        "contact_name": null,
+        "contact_interaction_outcome": null,
+        "contact_phone": null,
+        "contact_notes": null,
+        "contact_contacted_at": null,
+        "contact_next_contact_date": null,
+        "contact_interaction_duration": null,
+        "date_field": null,
+        "date_from": null,
+        "date_to": null
+    },
+    "orderBy": "contact_contacted_at",
+    "direction": "DESC"
+}
