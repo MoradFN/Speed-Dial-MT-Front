@@ -357,9 +357,14 @@ onMounted(async () => {
             @click="sortBy(column.key)"
           >
             {{ column.label }}
-            <span v-if="state.orderBy === column.key">
-              {{ state.direction === "ASC" ? "▼" : "▲" }}
-            </span>
+            <i
+              v-if="state.orderBy === column.key"
+              class="pi"
+              :class="{
+                'pi-angle-down': state.direction === 'ASC',
+                'pi-angle-up': state.direction === 'DESC',
+              }"
+            ></i>
           </div>
         </div>
 
