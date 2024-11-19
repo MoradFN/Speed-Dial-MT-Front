@@ -1,37 +1,108 @@
 <script setup>
-import { reactive, onMounted } from "vue";
+import { reactive, computed, onMounted } from "vue";
 import axios from "axios";
 
-// Reactive state for interaction history
+// Reactive state
 const state = reactive({
-  interactions: [], // Fetched interaction history
-  isLoading: true, // Loading state
-  error: null, // Error state
+  interactions: [],
+  isLoading: true,
+  error: null,
+  extraColumnVisibility: {
+    showCampaignStartDate: false,
+    showCampaignEndDate: false,
+    showCampaignStatus: false,
+    showContactPhone: false,
+    showContactInteractionDuration: false,
+  },
 });
 
-// Fetch interaction history from API
+// Fetch interaction history
 const fetchInteractions = async () => {
   state.isLoading = true;
+  state.error = null;
   try {
     const response = await axios.get(
       "/api/index.php?route=interaction-history"
     );
-    state.interactions = response.data.interactionHistory || []; // Populate interactions or fallback to empty array
+    state.interactions = response.data.interactionHistory || [];
   } catch (error) {
-    state.error = "Failed to fetch interaction history."; // Handle API error
+    state.error = "Failed to fetch interaction history.";
     console.error(error);
   } finally {
-    state.isLoading = false; // End loading state
+    state.isLoading = false;
   }
 };
 
-// Fetch data on component mount
+// Columns configuration
+const columns = [
+  { key: "user_name", label: "User Name" },
+  { key: "campaign_name", label: "Campaign Name" },
+  {
+    key: "campaign_start_date",
+    label: "Campaign Start Date",
+    visibility: () => state.extraColumnVisibility.showCampaignStartDate,
+  },
+  {
+    key: "campaign_end_date",
+    label: "Campaign End Date",
+    visibility: () => state.extraColumnVisibility.showCampaignEndDate,
+  },
+  {
+    key: "campaign_status",
+    label: "Campaign Status",
+    visibility: () => state.extraColumnVisibility.showCampaignStatus,
+  },
+  { key: "target_list_name", label: "Target List Name" },
+  { key: "account_name", label: "Account Name" },
+  { key: "contact_name", label: "Contact Name" },
+  { key: "outcome", label: "Outcome" },
+  { key: "contacted_at", label: "Contacted At" },
+  { key: "next_contact_date", label: "Next Contact Date" },
+  {
+    key: "contact_phone",
+    label: "Contact Phone",
+    visibility: () => state.extraColumnVisibility.showContactPhone,
+  },
+  {
+    key: "contact_interaction_duration",
+    label: "Contact Interaction Duration",
+    visibility: () =>
+      state.extraColumnVisibility.showContactInteractionDuration,
+  },
+];
+
+// Computed property for visible columns
+const visibleColumns = computed(() =>
+  columns.filter((column) => !column.visibility || column.visibility())
+);
+
+// Fetch data on mount
 onMounted(fetchInteractions);
 </script>
 
 <template>
   <div class="container mx-auto py-6">
     <h1 class="text-2xl font-bold mb-4">Interaction History</h1>
+    <!-- Toggle visibility checkboxes -->
+    <div class="mb-4 space-y-2">
+      <label
+        v-for="(value, key) in state.extraColumnVisibility"
+        :key="key"
+        class="flex items-center"
+      >
+        <input
+          type="checkbox"
+          v-model="state.extraColumnVisibility[key]"
+          class="mr-2"
+        />
+        {{
+          key
+            .replace("show", "")
+            .replace(/([A-Z])/g, " $1")
+            .trim()
+        }}
+      </label>
+    </div>
 
     <!-- Loading state -->
     <div v-if="state.isLoading" class="text-center py-4">Loading...</div>
@@ -39,28 +110,36 @@ onMounted(fetchInteractions);
     <!-- Error state -->
     <div v-else-if="state.error" class="text-red-500 py-4">
       {{ state.error }}
+      <button
+        @click="fetchInteractions"
+        class="bg-blue-500 text-white px-4 py-2 rounded mt-2 hover:bg-blue-600"
+      >
+        Retry
+      </button>
     </div>
 
-    <!-- Interaction table -->
+    <!-- Interaction Table -->
     <div v-else>
       <table class="table-auto w-full bg-white border rounded-lg shadow-md">
         <thead>
           <tr>
-            <th class="px-4 py-2">User Name</th>
-            <th class="px-4 py-2">Campaign Name</th>
-            <th class="px-4 py-2">Contact Name</th>
-            <th class="px-4 py-2">Contacted At</th>
-            <th class="px-4 py-2">Outcome</th>
+            <th
+              v-for="column in visibleColumns"
+              :key="column.key"
+              class="px-4 py-2"
+            >
+              {{ column.label }}
+            </th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="interaction in state.interactions" :key="interaction.id">
-            <td class="px-4 py-2">{{ interaction.user_name }}</td>
-            <td class="px-4 py-2">{{ interaction.campaign_name }}</td>
-            <td class="px-4 py-2">{{ interaction.contact_name }}</td>
-            <td class="px-4 py-2">{{ interaction.contact_contacted_at }}</td>
-            <td class="px-4 py-2">
-              {{ interaction.contact_interaction_outcome }}
+            <td
+              v-for="column in visibleColumns"
+              :key="column.key"
+              class="px-4 py-2"
+            >
+              {{ interaction[column.key] || "N/A" }}
             </td>
           </tr>
         </tbody>
