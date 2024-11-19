@@ -149,12 +149,12 @@ onMounted(fetchInteractions);
         <!-- Details Row -->
         <div class="bg-gray-100 p-4 border-b">
           <p>
-            <strong>Campaign Description:</strong>
-            {{ interaction.campaign_description || "N/A" }}
+            <strong>Interaction Notes:</strong>
+            {{ interaction.contact_notes || "N/A" }}
           </p>
           <p>
-            <strong>Contact Notes:</strong>
-            {{ interaction.contact_notes || "N/A" }}
+            <strong>Campaign Description:</strong>
+            {{ interaction.campaign_description || "N/A" }}
           </p>
         </div>
       </div>
