@@ -10,6 +10,7 @@ import { fetchInteractionsAPI } from "@/services/api";
 
 // Reactive state
 const state = reactive({
+  showFilters: false,
   interactions: [],
   isLoading: true,
   error: null,
@@ -60,6 +61,10 @@ const sortBy = (column) => {
     state.direction = "ASC";
   }
   fetchInteractions(); // Fetch updated data
+};
+
+const toggleFilters = () => {
+  state.showFilters = !state.showFilters;
 };
 
 const clearFilters = () => {
@@ -176,147 +181,162 @@ onMounted(async () => {
     <div
       class="p-4 bg-white shadow-md rounded-lg mb-4 flex flex-col items-center max-w-3xl w-full mx-auto"
     >
-      <h2 class="text-lg font-semibold mb-4">Filters</h2>
-      <!-- Filter Content -->
-
       <div
-        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full mx-4 mb-6"
+        @click="toggleFilters"
+        class="cursor-pointer text-lg font-semibold mb-4"
+        :aria-expanded="state.showFilters"
       >
-        <!-- Campaign Name -->
-        <div>
-          <label class="block font-semibold">Campaign Name</label>
-          <input
-            v-model="state.filters.campaign_name"
-            class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            placeholder="Enter campaign name"
-          />
-        </div>
-
-        <!-- Campaign Status -->
-        <div>
-          <label class="block font-semibold">Campaign Status</label>
-          <select
-            v-model="state.filters.campaign_status"
-            class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        {{
+          state.showFilters
+            ? "Hide search box"
+            : "Click here to search and filter through interactions"
+        }}
+      </div>
+      <transition name="slide-fade">
+        <div v-show="state.showFilters">
+          <!-- Filter Content -->
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full mb-6"
           >
-            <option value="">All</option>
-            <option value="completed">Completed</option>
-            <option value="active">Active</option>
-            <option value="planned">Planned</option>
-          </select>
-        </div>
+            <!-- Campaign Name -->
+            <div>
+              <label class="block font-semibold">Campaign Name</label>
+              <input
+                v-model="state.filters.campaign_name"
+                class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                placeholder="Enter campaign name"
+              />
+            </div>
 
-        <!-- Target List Name -->
-        <div>
-          <label class="block font-semibold">Target List Name</label>
-          <input
-            v-model="state.filters.target_list_name"
-            class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            placeholder="Enter target list name"
-          />
-        </div>
-      </div>
-      <div
-        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-6 w-full"
-      >
-        <!-- Account Name -->
-        <div>
-          <label class="block font-semibold">Account Name</label>
-          <input
-            v-model="state.filters.account_name"
-            class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            placeholder="Enter account name"
-          />
-        </div>
+            <!-- Campaign Status -->
+            <div>
+              <label class="block font-semibold">Campaign Status</label>
+              <select
+                v-model="state.filters.campaign_status"
+                class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              >
+                <option value="">All</option>
+                <option value="completed">Completed</option>
+                <option value="active">Active</option>
+                <option value="planned">Planned</option>
+              </select>
+            </div>
 
-        <!-- Contact Name -->
-        <div>
-          <label class="block font-semibold">Contact Name</label>
-          <input
-            v-model="state.filters.contact_name"
-            class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            placeholder="Enter contact name"
-          />
-        </div>
-
-        <!-- Contact Phone -->
-        <div>
-          <label class="block font-semibold">Contact Phone</label>
-          <input
-            v-model="state.filters.contact_phone"
-            class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            placeholder="Enter contact phone"
-          />
-        </div>
-        <div>
-          <label class="block font-semibold">Contact Outcome</label>
-          <select
-            v-model="state.filters.contact_interaction_outcome"
-            class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            <!-- Target List Name -->
+            <div>
+              <label class="block font-semibold">Target List Name</label>
+              <input
+                v-model="state.filters.target_list_name"
+                class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                placeholder="Enter target list name"
+              />
+            </div>
+          </div>
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-6 w-full"
           >
-            <option value="">All</option>
-            <option value="interested">Interested</option>
-            <option value="not_interested">Not Interested</option>
-            <option value="busy">Busy</option>
-            <option value="not_reachable">No Answer</option>
-            <option value="unreachable">Unreachable</option>
-            <option value="other - check notes">Other</option>
-          </select>
-        </div>
-      </div>
-      <!-- Contact Outcome -->
+            <!-- Account Name -->
+            <div>
+              <label class="block font-semibold">Account Name</label>
+              <input
+                v-model="state.filters.account_name"
+                class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                placeholder="Enter account name"
+              />
+            </div>
 
-      <div
-        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-6 w-full"
-      >
-        <!-- Date Field Selection -->
-        <div>
-          <label class="block font-semibold">Date Field</label>
-          <select
-            v-model="state.filters.date_field"
-            class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            <!-- Contact Name -->
+            <div>
+              <label class="block font-semibold">Contact Name</label>
+              <input
+                v-model="state.filters.contact_name"
+                class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                placeholder="Enter contact name"
+              />
+            </div>
+
+            <!-- Contact Phone -->
+            <div>
+              <label class="block font-semibold">Contact Phone</label>
+              <input
+                v-model="state.filters.contact_phone"
+                class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                placeholder="Enter contact phone"
+              />
+            </div>
+            <div>
+              <label class="block font-semibold">Contact Outcome</label>
+              <select
+                v-model="state.filters.contact_interaction_outcome"
+                class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              >
+                <option value="">All</option>
+                <option value="interested">Interested</option>
+                <option value="not_interested">Not Interested</option>
+                <option value="busy">Busy</option>
+                <option value="not_reachable">No Answer</option>
+                <option value="unreachable">Unreachable</option>
+                <option value="other - check notes">Other</option>
+              </select>
+            </div>
+          </div>
+          <!-- Contact Outcome -->
+
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-6 w-full"
           >
-            <option value="contact_contacted_at">Contacted At</option>
-            <option value="contact_next_contact_date">Next Contact Date</option>
-          </select>
-        </div>
+            <!-- Date Field Selection -->
+            <div>
+              <label class="block font-semibold">Date Field</label>
+              <select
+                v-model="state.filters.date_field"
+                class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              >
+                <option value="contact_contacted_at">Contacted At</option>
+                <option value="contact_next_contact_date">
+                  Next Contact Date
+                </option>
+              </select>
+            </div>
 
-        <!-- Date From -->
-        <div>
-          <label class="block font-semibold">Date From</label>
-          <input
-            type="date"
-            v-model="state.filters.date_from"
-            class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-        </div>
+            <!-- Date From -->
+            <div>
+              <label class="block font-semibold">Date From</label>
+              <input
+                type="date"
+                v-model="state.filters.date_from"
+                class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+            </div>
 
-        <!-- Date To -->
-        <div>
-          <label class="block font-semibold">Date To</label>
-          <input
-            type="date"
-            v-model="state.filters.date_to"
-            class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-        </div>
-      </div>
+            <!-- Date To -->
+            <div>
+              <label class="block font-semibold">Date To</label>
+              <input
+                type="date"
+                v-model="state.filters.date_to"
+                class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+            </div>
+          </div>
 
-      <!-- Filter and Clear Buttons -->
-      <div class="flex justify-center gap-6 mt-4">
-        <button
-          @click="fetchInteractions"
-          class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          Apply Filters
-        </button>
-        <button
-          @click="clearFilters"
-          class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-        >
-          Clear Filters
-        </button>
-      </div>
+          <!-- Filter and Clear Buttons -->
+          <div class="flex justify-center gap-6 mt-4">
+            <button
+              @click="fetchInteractions"
+              class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            >
+              Apply Filters
+            </button>
+            <button
+              @click="clearFilters"
+              class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+            >
+              Clear Filters
+            </button>
+          </div>
+        </div>
+      </transition>
     </div>
 
     <!-- Toggle visibility checkboxes -->
@@ -481,5 +501,17 @@ onMounted(async () => {
 
 .cursor-pointer {
   cursor: pointer;
+}
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+  transition: all 0.3s ease;
+}
+.slide-fade-enter-from {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+.slide-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
 }
 </style>
