@@ -14,7 +14,7 @@ const state = reactive({
   interactions: [],
   isLoading: true,
   error: null,
-  extraColumnWrapperVisibility: false,
+  extraColumnWrapperVisibility: false, // state för att visa eller gömma val av extra columner
   extraColumnVisibility: {
     showCampaignStartDate: false,
     showCampaignEndDate: false,
@@ -168,6 +168,10 @@ const toggleRow = (id) => {
   }
 };
 
+const toggleExtraColumnWrapper = () => {
+  state.extraColumnWrapperVisibility = !state.extraColumnWrapperVisibility;
+};
+
 // Fetch data on mount
 onMounted(async () => {
   await fetchInteractions();
@@ -176,8 +180,7 @@ onMounted(async () => {
 
 <template>
   <div class="w-[90vw] mx-auto py-6">
-    <h1 class="text-2xl font-bold mb-4">Interaction History</h1>
-
+    <h1 class="text-2xl font-bold mb-4 text-center">Interaction History</h1>
     <!-- Filters Section n buttons -->
     <div
       class="p-4 bg-green-50 shadow-md rounded-lg mb-4 flex flex-col items-center max-w-3xl w-full mx-auto"
@@ -340,28 +343,51 @@ onMounted(async () => {
       </transition>
     </div>
 
-    <!-- Toggle visibility checkboxes -->
-
-    <div class="mb-4 space-y-2">
-      <label
-        v-for="(value, key) in state.extraColumnVisibility"
-        :key="key"
-        class="flex items-center"
-      >
-        <input
-          type="checkbox"
-          v-model="state.extraColumnVisibility[key]"
-          class="mr-2"
-        />
-        <!-- använder key och tar bort show och lägger till space -->
-        {{
-          key
-            .replace("show", "")
-            .replace(/([A-Z])/g, " $1")
-            .trim()
-        }}
-      </label>
-    </div>
+    <!-- Toggle visibility of checkboxes/buttons -->
+    <aside class="w-[770px] p-4 mr-4">
+      <!-- Toggle visibility of checkboxes/buttons -->
+      <div class="grid grid-cols-4 gap-4">
+        <!-- Toggle Button -->
+        <div
+          @click="toggleExtraColumnWrapper"
+          role="button"
+          tabindex="0"
+          class="cursor-pointer text-sm font-medium p-2 w-[180px] h-[40px] text-left rounded-lg bg-gray-100 shadow hover:bg-gray-200 transition"
+          :aria-expanded="state.extraColumnWrapperVisibility"
+        >
+          {{
+            state.extraColumnWrapperVisibility
+              ? "Hide Column Options"
+              : "Add Extra Columns"
+          }}
+        </div>
+        <!-- Extra Columns Wrapper -->
+        <transition name="right-slide-fade">
+          <div
+            v-show="state.extraColumnWrapperVisibility"
+            class="flex items-start space-x-4"
+          >
+            <label
+              v-for="(value, key) in state.extraColumnVisibility"
+              :key="key"
+              class="flex justify-between items-center p-2 border rounded shadow bg-white hover:bg-gray-100 transition whitespace-nowrap"
+            >
+              <input
+                type="checkbox"
+                v-model="state.extraColumnVisibility[key]"
+                class="mr-2"
+              />
+              {{
+                key
+                  .replace("show", "")
+                  .replace(/([A-Z])/g, " $1")
+                  .trim()
+              }}
+            </label>
+          </div>
+        </transition>
+      </div>
+    </aside>
 
     <!-- Loading state -->
     <div v-if="state.isLoading" class="text-center py-4">Loading...</div>
@@ -487,7 +513,7 @@ onMounted(async () => {
 
 <style scoped>
 .header-cell {
-  text-align: center;
+  /* text-align: center; */
   word-wrap: break-word; /* Allow words to break naturally */
   white-space: nowrap; /* Prevent text wrapping */
   overflow: hidden;
@@ -497,9 +523,9 @@ onMounted(async () => {
   transition: background-color 0.2s ease;
 }
 
-.grid:hover {
+/* .grid:hover {
   background-color: #f3f4f6;
-}
+} */
 
 .cursor-pointer {
   cursor: pointer;
@@ -515,5 +541,18 @@ onMounted(async () => {
 .slide-fade-leave-to {
   opacity: 0;
   transform: translateY(-10px);
+}
+
+.right-slide-fade-enter-active,
+.right-slide-fade-leave-active {
+  transition: all 0.3s ease;
+}
+.right-slide-fade-enter-from {
+  opacity: 0;
+  transform: translateX(-10px); /* Slide in from the left */
+}
+.right-slide-fade-leave-to {
+  opacity: 0;
+  transform: translateX(-10px); /* Slide out to the left */
 }
 </style>
