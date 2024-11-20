@@ -173,17 +173,21 @@ onMounted(async () => {
     <h1 class="text-2xl font-bold mb-4">Interaction History</h1>
 
     <!-- Filters Section n buttons -->
-    <div class="p-4 bg-white shadow-md rounded-lg mb-4">
+    <div
+      class="p-4 bg-white shadow-md rounded-lg mb-4 flex flex-col items-center max-w-3xl w-full mx-auto"
+    >
       <h2 class="text-lg font-semibold mb-4">Filters</h2>
       <!-- Filter Content -->
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full mx-4 mb-6"
+      >
         <!-- Campaign Name -->
         <div>
           <label class="block font-semibold">Campaign Name</label>
           <input
             v-model="state.filters.campaign_name"
-            class="w-full border rounded px-2 py-1"
+            class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
             placeholder="Enter campaign name"
           />
         </div>
@@ -193,7 +197,7 @@ onMounted(async () => {
           <label class="block font-semibold">Campaign Status</label>
           <select
             v-model="state.filters.campaign_status"
-            class="w-full border rounded px-2 py-1"
+            class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
             <option value="">All</option>
             <option value="completed">Completed</option>
@@ -207,18 +211,20 @@ onMounted(async () => {
           <label class="block font-semibold">Target List Name</label>
           <input
             v-model="state.filters.target_list_name"
-            class="w-full border rounded px-2 py-1"
+            class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
             placeholder="Enter target list name"
           />
         </div>
       </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-6 w-full"
+      >
         <!-- Account Name -->
         <div>
           <label class="block font-semibold">Account Name</label>
           <input
             v-model="state.filters.account_name"
-            class="w-full border rounded px-2 py-1"
+            class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
             placeholder="Enter account name"
           />
         </div>
@@ -228,7 +234,7 @@ onMounted(async () => {
           <label class="block font-semibold">Contact Name</label>
           <input
             v-model="state.filters.contact_name"
-            class="w-full border rounded px-2 py-1"
+            class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
             placeholder="Enter contact name"
           />
         </div>
@@ -238,7 +244,7 @@ onMounted(async () => {
           <label class="block font-semibold">Contact Phone</label>
           <input
             v-model="state.filters.contact_phone"
-            class="w-full border rounded px-2 py-1"
+            class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
             placeholder="Enter contact phone"
           />
         </div>
@@ -246,7 +252,7 @@ onMounted(async () => {
           <label class="block font-semibold">Contact Outcome</label>
           <select
             v-model="state.filters.contact_interaction_outcome"
-            class="w-full border rounded px-2 py-1"
+            class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
             <option value="">All</option>
             <option value="interested">Interested</option>
@@ -260,13 +266,15 @@ onMounted(async () => {
       </div>
       <!-- Contact Outcome -->
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-6 w-full"
+      >
         <!-- Date Field Selection -->
         <div>
           <label class="block font-semibold">Date Field</label>
           <select
             v-model="state.filters.date_field"
-            class="w-full border rounded px-2 py-1"
+            class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
             <option value="contact_contacted_at">Contacted At</option>
             <option value="contact_next_contact_date">Next Contact Date</option>
@@ -279,7 +287,7 @@ onMounted(async () => {
           <input
             type="date"
             v-model="state.filters.date_from"
-            class="w-full border rounded px-2 py-1"
+            class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
         </div>
 
@@ -289,13 +297,13 @@ onMounted(async () => {
           <input
             type="date"
             v-model="state.filters.date_to"
-            class="w-full border rounded px-2 py-1"
+            class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
         </div>
       </div>
 
       <!-- Filter and Clear Buttons -->
-      <div class="flex justify-start gap-4">
+      <div class="flex justify-center gap-6 mt-4">
         <button
           @click="fetchInteractions"
           class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
