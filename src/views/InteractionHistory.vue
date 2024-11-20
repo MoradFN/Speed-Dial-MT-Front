@@ -14,6 +14,7 @@ const state = reactive({
   interactions: [],
   isLoading: true,
   error: null,
+  showExtraColumnsButtons: false,
   extraColumnVisibility: {
     showCampaignStartDate: false,
     showCampaignEndDate: false,
@@ -340,6 +341,7 @@ onMounted(async () => {
     </div>
 
     <!-- Toggle visibility checkboxes -->
+
     <div class="mb-4 space-y-2">
       <label
         v-for="(value, key) in state.extraColumnVisibility"
