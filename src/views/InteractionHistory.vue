@@ -1,12 +1,20 @@
 <script setup>
 import { reactive, computed, onMounted } from "vue";
 import axios from "axios";
+import { fetchInteractionsAPI } from "@/services/api";
+
+/////MTTODO FIXA SÅ ATT NÄR DU ÄR PÅ SISTA PAGEN OCH FILTRERAR BORT ALA ITEMS FÖRUTOM EN
+////// OPEN AND CLOSE FILTER SEARCH
+///// ADD COMUMNS OPEN AND CLOSE?
+/// STYTLING SIST
 
 // Reactive state
 const state = reactive({
+  showFilters: false,
   interactions: [],
   isLoading: true,
   error: null,
+  extraColumnWrapperVisibility: false, // state för att visa eller gömma val av extra columner
   extraColumnVisibility: {
     showCampaignStartDate: false,
     showCampaignEndDate: false,
@@ -56,6 +64,10 @@ const sortBy = (column) => {
   fetchInteractions(); // Fetch updated data
 };
 
+const toggleFilters = () => {
+  state.showFilters = !state.showFilters;
+};
+
 const clearFilters = () => {
   state.filters = {
     campaign_name: "",
@@ -88,13 +100,7 @@ const fetchInteractions = async () => {
   state.error = null;
 
   try {
-    const response = await axios.get(
-      "/api/index.php?route=interaction-history",
-      {
-        params: buildQueryParams(),
-      }
-    );
-
+    const response = await fetchInteractionsAPI(buildQueryParams());
     const data = response.data;
     state.interactions = data.interactionHistory || [];
     state.pagination.page = data.page || 1;
@@ -109,8 +115,6 @@ const fetchInteractions = async () => {
   } finally {
     state.isLoading = false;
   }
-
-  console.log("Updated state:", state);
 };
 
 // Columns configuration
@@ -164,6 +168,10 @@ const toggleRow = (id) => {
   }
 };
 
+const toggleExtraColumnWrapper = () => {
+  state.extraColumnWrapperVisibility = !state.extraColumnWrapperVisibility;
+};
+
 // Fetch data on mount
 onMounted(async () => {
   await fetchInteractions();
@@ -172,163 +180,214 @@ onMounted(async () => {
 
 <template>
   <div class="w-[90vw] mx-auto py-6">
-    <h1 class="text-2xl font-bold mb-4">Interaction History</h1>
-
-    <!-- Filters Section -->
-    <div class="mb-4 space-y-4">
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-        <!-- Campaign Name -->
-        <div>
-          <label class="block font-semibold">Campaign Name</label>
-          <input
-            v-model="state.filters.campaign_name"
-            class="w-full border rounded px-2 py-1"
-            placeholder="Enter campaign name"
-          />
-        </div>
-
-        <!-- Campaign Status -->
-        <div>
-          <label class="block font-semibold">Campaign Status</label>
-          <select
-            v-model="state.filters.campaign_status"
-            class="w-full border rounded px-2 py-1"
-          >
-            <option value="">All</option>
-            <option value="completed">Completed</option>
-            <option value="active">Active</option>
-            <option value="planned">Planned</option>
-          </select>
-        </div>
-
-        <!-- Target List Name -->
-        <div>
-          <label class="block font-semibold">Target List Name</label>
-          <input
-            v-model="state.filters.target_list_name"
-            class="w-full border rounded px-2 py-1"
-            placeholder="Enter target list name"
-          />
-        </div>
-
-        <!-- Account Name -->
-        <div>
-          <label class="block font-semibold">Account Name</label>
-          <input
-            v-model="state.filters.account_name"
-            class="w-full border rounded px-2 py-1"
-            placeholder="Enter account name"
-          />
-        </div>
-
-        <!-- Contact Name -->
-        <div>
-          <label class="block font-semibold">Contact Name</label>
-          <input
-            v-model="state.filters.contact_name"
-            class="w-full border rounded px-2 py-1"
-            placeholder="Enter contact name"
-          />
-        </div>
-
-        <!-- Contact Phone -->
-        <div>
-          <label class="block font-semibold">Contact Phone</label>
-          <input
-            v-model="state.filters.contact_phone"
-            class="w-full border rounded px-2 py-1"
-            placeholder="Enter contact phone"
-          />
-        </div>
-
-        <!-- Contact Outcome -->
-        <div>
-          <label class="block font-semibold">Contact Outcome</label>
-          <select
-            v-model="state.filters.contact_interaction_outcome"
-            class="w-full border rounded px-2 py-1"
-          >
-            <option value="">All</option>
-            <option value="interested">Interested</option>
-            <option value="not_interested">Not Interested</option>
-            <option value="busy">Busy</option>
-            <option value="not_reachable">No Answer</option>
-            <option value="unreachable">Unreachable</option>
-            <option value="other - check notes">Other</option>
-          </select>
-        </div>
-
-        <!-- Date Field Selection -->
-        <div>
-          <label class="block font-semibold">Date Field</label>
-          <select
-            v-model="state.filters.date_field"
-            class="w-full border rounded px-2 py-1"
-          >
-            <option value="contact_contacted_at">Contacted At</option>
-            <option value="contact_next_contact_date">Next Contact Date</option>
-          </select>
-        </div>
-
-        <!-- Date From -->
-        <div>
-          <label class="block font-semibold">Date From</label>
-          <input
-            type="date"
-            v-model="state.filters.date_from"
-            class="w-full border rounded px-2 py-1"
-          />
-        </div>
-
-        <!-- Date To -->
-        <div>
-          <label class="block font-semibold">Date To</label>
-          <input
-            type="date"
-            v-model="state.filters.date_to"
-            class="w-full border rounded px-2 py-1"
-          />
-        </div>
-      </div>
-
-      <!-- Filter and Clear Buttons -->
-      <div class="flex justify-start gap-4">
-        <button
-          @click="fetchInteractions"
-          class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          Apply Filters
-        </button>
-        <button
-          @click="clearFilters"
-          class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-        >
-          Clear Filters
-        </button>
-      </div>
-    </div>
-
-    <!-- Toggle visibility checkboxes -->
-    <div class="mb-4 space-y-2">
-      <label
-        v-for="(value, key) in state.extraColumnVisibility"
-        :key="key"
-        class="flex items-center"
+    <h1 class="text-2xl font-bold mb-4 text-center">Interaction History</h1>
+    <!-- Filters Section n buttons -->
+    <div
+      class="p-4 bg-green-50 shadow-md rounded-lg mb-4 flex flex-col items-center max-w-3xl w-full mx-auto"
+    >
+      <div
+        @click="toggleFilters"
+        class="cursor-pointer text-lg font-semibold p-4 w-full text-center rounded-lg bg-green-100 shadow hover:bg-green-200 transition"
+        :aria-expanded="state.showFilters"
       >
-        <input
-          type="checkbox"
-          v-model="state.extraColumnVisibility[key]"
-          class="mr-2"
-        />
-        <!-- använder key och tar bort show och lägger till space -->
         {{
-          key
-            .replace("show", "")
-            .replace(/([A-Z])/g, " $1")
-            .trim()
+          state.showFilters
+            ? "Hide search box"
+            : "Click here to search and filter through interactions"
         }}
-      </label>
+      </div>
+      <transition name="slide-fade">
+        <div v-show="state.showFilters">
+          <!-- Filter Content -->
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full mb-6"
+          >
+            <!-- Campaign Name -->
+            <div>
+              <label class="block font-semibold">Campaign Name</label>
+              <input
+                v-model="state.filters.campaign_name"
+                class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                placeholder="Enter campaign name"
+              />
+            </div>
+
+            <!-- Campaign Status -->
+            <div>
+              <label class="block font-semibold">Campaign Status</label>
+              <select
+                v-model="state.filters.campaign_status"
+                class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              >
+                <option value="">All</option>
+                <option value="completed">Completed</option>
+                <option value="active">Active</option>
+                <option value="planned">Planned</option>
+              </select>
+            </div>
+
+            <!-- Target List Name -->
+            <div>
+              <label class="block font-semibold">Target List Name</label>
+              <input
+                v-model="state.filters.target_list_name"
+                class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                placeholder="Enter target list name"
+              />
+            </div>
+          </div>
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-6 w-full"
+          >
+            <!-- Account Name -->
+            <div>
+              <label class="block font-semibold">Account Name</label>
+              <input
+                v-model="state.filters.account_name"
+                class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                placeholder="Enter account name"
+              />
+            </div>
+
+            <!-- Contact Name -->
+            <div>
+              <label class="block font-semibold">Contact Name</label>
+              <input
+                v-model="state.filters.contact_name"
+                class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                placeholder="Enter contact name"
+              />
+            </div>
+
+            <!-- Contact Phone -->
+            <div>
+              <label class="block font-semibold">Contact Phone</label>
+              <input
+                v-model="state.filters.contact_phone"
+                class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                placeholder="Enter contact phone"
+              />
+            </div>
+            <div>
+              <label class="block font-semibold">Contact Outcome</label>
+              <select
+                v-model="state.filters.contact_interaction_outcome"
+                class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              >
+                <option value="">All</option>
+                <option value="interested">Interested</option>
+                <option value="not_interested">Not Interested</option>
+                <option value="busy">Busy</option>
+                <option value="not_reachable">No Answer</option>
+                <option value="unreachable">Unreachable</option>
+                <option value="other - check notes">Other</option>
+              </select>
+            </div>
+          </div>
+          <!-- Contact Outcome -->
+
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-6 w-full"
+          >
+            <!-- Date Field Selection -->
+            <div>
+              <label class="block font-semibold">Date Field</label>
+              <select
+                v-model="state.filters.date_field"
+                class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              >
+                <option value="contact_contacted_at">Contacted At</option>
+                <option value="contact_next_contact_date">
+                  Next Contact Date
+                </option>
+              </select>
+            </div>
+
+            <!-- Date From -->
+            <div>
+              <label class="block font-semibold">Date From</label>
+              <input
+                type="date"
+                v-model="state.filters.date_from"
+                class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+            </div>
+
+            <!-- Date To -->
+            <div>
+              <label class="block font-semibold">Date To</label>
+              <input
+                type="date"
+                v-model="state.filters.date_to"
+                class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+            </div>
+          </div>
+
+          <!-- Filter and Clear Buttons -->
+          <div class="flex justify-center gap-6 mt-4">
+            <button
+              @click="fetchInteractions"
+              class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            >
+              Apply Filters
+            </button>
+            <button
+              @click="clearFilters"
+              class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+            >
+              Clear Filters
+            </button>
+          </div>
+        </div>
+      </transition>
     </div>
+
+    <!-- Toggle visibility of checkboxes/buttons -->
+    <aside class="w-[770px] p-4 mr-4">
+      <!-- Toggle visibility of checkboxes/buttons -->
+      <div class="grid grid-cols-4 gap-4">
+        <!-- Toggle Button -->
+        <div
+          @click="toggleExtraColumnWrapper"
+          role="button"
+          tabindex="0"
+          class="cursor-pointer text-sm font-medium p-2 w-[180px] h-[40px] text-left rounded-lg bg-gray-100 shadow hover:bg-gray-200 transition"
+          :aria-expanded="state.extraColumnWrapperVisibility"
+        >
+          {{
+            state.extraColumnWrapperVisibility
+              ? "Hide Column Options"
+              : "Add Extra Columns"
+          }}
+        </div>
+        <!-- Extra Columns Wrapper -->
+        <transition name="right-slide-fade">
+          <div
+            v-show="state.extraColumnWrapperVisibility"
+            class="flex items-start space-x-4"
+          >
+            <label
+              v-for="(value, key) in state.extraColumnVisibility"
+              :key="key"
+              class="flex justify-between items-center p-2 border rounded shadow bg-white hover:bg-gray-100 transition whitespace-nowrap"
+            >
+              <input
+                type="checkbox"
+                v-model="state.extraColumnVisibility[key]"
+                class="mr-2"
+              />
+              {{
+                key
+                  .replace("show", "")
+                  .replace(/([A-Z])/g, " $1")
+                  .trim()
+              }}
+            </label>
+          </div>
+        </transition>
+      </div>
+    </aside>
 
     <!-- Loading state -->
     <div v-if="state.isLoading" class="text-center py-4">Loading...</div>
@@ -362,9 +421,14 @@ onMounted(async () => {
             @click="sortBy(column.key)"
           >
             {{ column.label }}
-            <span v-if="state.orderBy === column.key">
-              {{ state.direction === "ASC" ? "▼" : "▲" }}
-            </span>
+            <i
+              v-if="state.orderBy === column.key"
+              class="pi"
+              :class="{
+                'pi-angle-down': state.direction === 'ASC',
+                'pi-angle-up': state.direction === 'DESC',
+              }"
+            ></i>
           </div>
         </div>
 
@@ -449,7 +513,7 @@ onMounted(async () => {
 
 <style scoped>
 .header-cell {
-  text-align: center;
+  /* text-align: center; */
   word-wrap: break-word; /* Allow words to break naturally */
   white-space: nowrap; /* Prevent text wrapping */
   overflow: hidden;
@@ -459,11 +523,36 @@ onMounted(async () => {
   transition: background-color 0.2s ease;
 }
 
-.grid:hover {
+/* .grid:hover {
   background-color: #f3f4f6;
-}
+} */
 
 .cursor-pointer {
   cursor: pointer;
+}
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+  transition: all 0.3s ease;
+}
+.slide-fade-enter-from {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+.slide-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.right-slide-fade-enter-active,
+.right-slide-fade-leave-active {
+  transition: all 0.3s ease;
+}
+.right-slide-fade-enter-from {
+  opacity: 0;
+  transform: translateX(-10px); /* Slide in from the left */
+}
+.right-slide-fade-leave-to {
+  opacity: 0;
+  transform: translateX(-10px); /* Slide out to the left */
 }
 </style>
