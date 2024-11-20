@@ -4,6 +4,9 @@ import axios from "axios";
 import { fetchInteractionsAPI } from "@/services/api";
 
 /////MTTODO FIXA SÅ ATT NÄR DU ÄR PÅ SISTA PAGEN OCH FILTRERAR BORT ALA ITEMS FÖRUTOM EN
+////// OPEN AND CLOSE FILTER SEARCH
+///// ADD COMUMNS OPEN AND CLOSE?
+/// STYTLING SIST
 
 // Reactive state
 const state = reactive({
