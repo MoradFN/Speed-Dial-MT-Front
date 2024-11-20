@@ -14,7 +14,7 @@ const state = reactive({
   interactions: [],
   isLoading: true,
   error: null,
-  showExtraColumnsButtons: false,
+  extraColumnWrapperVisibility: false,
   extraColumnVisibility: {
     showCampaignStartDate: false,
     showCampaignEndDate: false,
