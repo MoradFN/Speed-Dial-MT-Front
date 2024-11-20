@@ -179,11 +179,11 @@ onMounted(async () => {
 
     <!-- Filters Section n buttons -->
     <div
-      class="p-4 bg-white shadow-md rounded-lg mb-4 flex flex-col items-center max-w-3xl w-full mx-auto"
+      class="p-4 bg-green-50 shadow-md rounded-lg mb-4 flex flex-col items-center max-w-3xl w-full mx-auto"
     >
       <div
         @click="toggleFilters"
-        class="cursor-pointer text-lg font-semibold mb-4"
+        class="cursor-pointer text-lg font-semibold p-4 w-full text-center rounded-lg bg-green-100 shadow hover:bg-green-200 transition"
         :aria-expanded="state.showFilters"
       >
         {{
